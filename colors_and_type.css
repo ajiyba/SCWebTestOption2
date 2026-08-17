@@ -1,0 +1,164 @@
+/* ============================================================
+   SC Software Consultancy — Design System Foundations
+   Colors + Typography tokens
+   ============================================================ */
+
+/* ---- Brand fonts (self-hosted, uploaded by SC) ----
+   Manuka   — condensed display / headlines
+   FK Roman — editorial serif accent
+   PolySans — body + UI + mono
+*/
+
+/* Manuka — display */
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Thin-BF663c33db97e05.otf') format('opentype');font-weight:100;font-style:normal;font-display:swap}
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Light-BF663c33db8aab4.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Regular-BF663c33db89825.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Medium-BF663c33db67c40.otf') format('opentype');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Bold-BF663c33db7b03f.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Black-BF663c33db5944e.otf') format('opentype');font-weight:800;font-style:normal;font-display:swap}
+@font-face{font-family:'Manuka';src:url('fonts/TestManuka-Ultra-BF663c33db84738.otf') format('opentype');font-weight:900;font-style:normal;font-display:swap}
+
+/* FK Roman Standard — editorial serif */
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-Light-BF65712ec927789.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-LightOblique-BF65712ec9387c4.otf') format('opentype');font-weight:300;font-style:italic;font-display:swap}
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-Regular-BF65712ec975639.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-Oblique-BF65712ec96ce05.otf') format('opentype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-Medium-BF65712ec949de0.otf') format('opentype');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-MediumOblique-BF65712ec956b58.otf') format('opentype');font-weight:500;font-style:italic;font-display:swap}
+@font-face{font-family:'FK Roman';src:url('fonts/FKRomanStandardTrial-Bold-BF65712ec913098.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap}
+
+/* PolySans — body / UI */
+@font-face{font-family:'PolySans';src:url('fonts/polysanstrial-slim.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+@font-face{font-family:'PolySans';src:url('fonts/polysanstrial-neutral.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'PolySans';src:url('fonts/polysansitalictrial-neutralitalic.otf') format('opentype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:'PolySans';src:url('fonts/polysanstrial-median.otf') format('opentype');font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:'PolySans';src:url('fonts/polysansitalictrial-medianitalic.otf') format('opentype');font-weight:500;font-style:italic;font-display:swap}
+@font-face{font-family:'PolySans';src:url('fonts/polysanstrial-bulky.otf') format('opentype');font-weight:700;font-style:normal;font-display:swap}
+
+/* PolySans Mono — eyebrows / labels / code */
+@font-face{font-family:'PolySans Mono';src:url('fonts/polysanstrial-neutralmono.otf') format('opentype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'PolySans Mono';src:url('fonts/polysanstrial-medianmono.otf') format('opentype');font-weight:500;font-style:normal;font-display:swap}
+
+:root {
+  /* ---- Brand core (extracted from SC logo) ---- */
+  --sc-charcoal:    #1C2127;  /* Primary Dark  — base surface */
+  --sc-crimson:     #1D86AC;  /* Primary Accent — steel-blue cube face (updated to match new logo) */
+  --sc-steel:       #68727C;  /* Neutral Mid */
+  --sc-silver:      #C2C5C9;  /* Neutral Light */
+  --sc-offwhite:    #F4F5F6;  /* Light-theme base */
+
+  /* ---- Accent scale (steel-blue, sampled from new logo cube facet) ---- */
+  --crimson-700:    #0F4C66;
+  --crimson-600:    #146A8A;
+  --crimson-500:    #1D86AC;  /* brand */
+  --crimson-400:    #3CAFDC;
+  --crimson-300:    #8FD3EC;
+  --crimson-glow:   rgba(29, 134, 172, 0.45);
+
+  /* ---- Charcoal / surface scale (dark theme) ---- */
+  --ink-900:        #14171C;  /* deepest — page void */
+  --ink-850:        #181C22;
+  --ink-800:        #1C2127;  /* base surface */
+  --ink-700:        #232932;  /* raised card */
+  --ink-600:        #2C333D;  /* elevated / hover */
+  --ink-500:        #3A424D;  /* border-strong */
+
+  /* ---- Neutral text scale ---- */
+  --steel-700:      #4E5862;
+  --steel-600:      #68727C;  /* brand steel */
+  --steel-500:      #828C96;
+  --silver-400:     #A7ADB4;
+  --silver-300:     #C2C5C9;  /* brand silver */
+  --silver-200:     #DBDDE0;
+
+  /* ---- Semantic — DARK theme (default) ---- */
+  --bg-base:        var(--ink-800);
+  --bg-void:        var(--ink-900);
+  --bg-raised:      var(--ink-700);
+  --bg-elevated:    var(--ink-600);
+
+  --fg1:            #EEF0F2;  /* primary text */
+  --fg2:            var(--silver-300);  /* secondary text */
+  --fg3:            var(--steel-500);   /* tertiary / captions */
+  --fg-accent:      var(--crimson-400);
+
+  --border-1:       rgba(194, 197, 201, 0.10);  /* hairline */
+  --border-2:       rgba(194, 197, 201, 0.16);  /* default */
+  --border-strong:  rgba(194, 197, 201, 0.28);
+
+  --accent:         var(--crimson-500);
+  --accent-hover:   var(--crimson-400);
+  --accent-press:   var(--crimson-600);
+
+  /* ---- Type families ---- */
+  --font-display:   'Manuka', 'Arial Narrow', system-ui, sans-serif;  /* condensed headlines */
+  --font-serif:     'FK Roman', Georgia, 'Times New Roman', serif;     /* editorial accent */
+  --font-body:      'PolySans', system-ui, -apple-system, sans-serif;  /* body + UI */
+  --font-mono:      'PolySans Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* ---- Type scale (fluid-friendly base) ---- */
+  --fs-display:     clamp(3rem, 6vw, 5.5rem);    /* hero */
+  --fs-h1:          clamp(2.4rem, 4vw, 3.5rem);
+  --fs-h2:          clamp(1.8rem, 2.6vw, 2.5rem);
+  --fs-h3:          1.5rem;
+  --fs-h4:          1.2rem;
+  --fs-body-lg:     1.125rem;
+  --fs-body:        1rem;
+  --fs-sm:          0.875rem;
+  --fs-eyebrow:     0.78rem;
+  --fs-mono:        0.8125rem;
+
+  /* ---- Spacing scale (4px base) ---- */
+  --sp-1: 4px;  --sp-2: 8px;  --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+  --sp-9: 96px; --sp-10: 128px;
+
+  /* ---- Radius ---- */
+  --r-xs: 4px; --r-sm: 6px; --r-md: 10px; --r-lg: 16px; --r-xl: 24px; --r-pill: 999px;
+
+  /* ---- Elevation / shadow ---- */
+  --shadow-sm:  0 1px 2px rgba(0,0,0,0.4);
+  --shadow-md:  0 8px 24px rgba(0,0,0,0.45);
+  --shadow-lg:  0 24px 60px rgba(0,0,0,0.55);
+  --shadow-glow: 0 0 0 1px rgba(29,134,172,0.4), 0 8px 40px var(--crimson-glow);
+
+  /* ---- Motion ---- */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms; --dur-med: 320ms; --dur-slow: 640ms;
+}
+
+/* ============================================================
+   Semantic element styles — opt in by importing this file
+   ============================================================ */
+
+.sc-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-accent);
+}
+
+.sc-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-display);
+  line-height: 0.94;
+  letter-spacing: -0.005em;
+  color: var(--fg1);
+}
+
+/* serif editorial accent — pair inside a Manuka headline as italic */
+.sc-accent { font-family: var(--font-serif); font-style: italic; font-weight: 400; color: var(--fg-accent); }
+
+.sc-h1 { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h1); line-height: 1.0; letter-spacing: -0.005em; color: var(--fg1); }
+.sc-h2 { font-family: var(--font-display); font-weight: 700; font-size: var(--fs-h2); line-height: 1.04; letter-spacing: -0.005em; color: var(--fg1); }
+.sc-h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--fs-h3); line-height: 1.15; color: var(--fg1); }
+.sc-h4 { font-family: var(--font-display); font-weight: 500; font-size: var(--fs-h4); line-height: 1.2; color: var(--fg1); }
+
+.sc-body-lg { font-family: var(--font-body); font-size: var(--fs-body-lg); line-height: 1.6; color: var(--fg2); }
+.sc-body    { font-family: var(--font-body); font-size: var(--fs-body); line-height: 1.6; color: var(--fg2); }
+.sc-sm      { font-family: var(--font-body); font-size: var(--fs-sm); line-height: 1.5; color: var(--fg3); }
+.sc-mono    { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: 0.02em; color: var(--fg2); }

@@ -1,0 +1,1431 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software Consultancy — Oracle Fusion partner. Implementation, support, verticals.</title>
+  <meta name="description" content="Software Consultancy is an Oracle Fusion partner specialising in implementation, support, and the vertical portals and automations that make Fusion work for your business.">
+  <style>/* ============================================================
+ * Software Consultancy — Brand layer over Voltline
+ * ------------------------------------------------------------
+ * Inherits Voltline's tokens, spacing, type. Overrides the
+ * mint/ultraviolet hazard palette with SC's deep-blue mark and
+ * the steel-gray facet palette from the SC logo cube.
+ * ============================================================ */
+
+/* ============================================================
+ * Voltline — Colors, Type, Spacing, Radius, Depth
+ * ------------------------------------------------------------
+ * Import this file everywhere. It declares the system's
+ * design tokens as CSS variables and bakes a small set of
+ * semantic typography classes that match the Voltline rhythm.
+ *
+ * Pair with fonts.css (Google Fonts substitutes).
+ * ============================================================ */
+
+/* Voltline font stack — proprietary trial files served from /fonts.
+ *
+ *   Manuka            (Klim Type Foundry)            — TestManuka-*.otf
+ *   PolySans          (Pangram Pangram)              — polysanstrial-*.otf
+ *   PolySans Mono     (Pangram Pangram)              — polysanstrial-*mono.otf
+ *   FK Roman Standard (Florian Karsten)              — FKRomanStandardTrial-*.otf
+ *
+ * These are *trial* / *test* font files. They are licensed for design
+ * exploration only — replace with the production license files before
+ * shipping to production. The Google Fonts substitutes (Archivo Black,
+ * Space Grotesk, Space Mono, Newsreader) remain in the family stacks as
+ * fallbacks for environments where the trial files are stripped.
+ */
+
+/* ============================================================
+ * Manuka — Display only (≥60px). Width = standard cut.
+ *   (Slab and Condensed cuts are also on disk under
+ *    TestManukaSlab-*.otf and TestManukaCondensed-*.otf
+ *    if a future design needs them.)
+ * ============================================================ */
+
+@font-face {
+  font-family: "Manuka";
+  src: url("1668a147-1045-42a9-91c7-63865c454f38") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manuka";
+  src: url("01209732-e1fc-42a0-8d99-01437ef3b1c2") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manuka";
+  src: url("a4913183-4e09-45f2-a5c8-97d5fa6cdc02") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manuka";
+  src: url("188eb68e-646c-40d4-9308-329a83a1b373") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manuka";
+  src: url("3da6ec49-8813-4b32-8ee6-86d81c55b1b9") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manuka";
+  src: url("f591d79d-38b3-4e1c-b095-43bb5f966ca1") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Manuka";
+  src: url("04fad465-7ed8-4ad6-b926-e9dee6e0cd45") format("opentype");
+  font-weight: 950;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+ * PolySans — UI workhorse (Standard width).
+ *   Width terms (Slim / Neutral / Median / Bulky) are mapped to
+ *   the CSS weight axis. Wide and Mono cuts live under separate
+ *   @font-face family names below.
+ * ============================================================ */
+
+@font-face {
+  font-family: "PolySans";
+  src: url("a39b6408-2c35-485a-b609-987439c9461f") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("0d6688d6-2d00-4612-9c69-ec9948520958") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("20a46383-c15c-460a-b6bc-e6c18313d457") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("a8932809-5b36-4cd4-879f-633a7d87749e") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("d3c934b7-6558-4804-b7c3-1ceed3cb8e5a") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("dd4a9a3b-2eb9-492d-8ed1-15290142e47b") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("be809ebd-5b41-4fbe-a68a-7516e42f4673") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans";
+  src: url("87f52c0c-9102-4405-ac51-9cf5ecc9ecbc") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* PolySans Mono — UPPERCASE-only register. */
+@font-face {
+  font-family: "PolySans Mono";
+  src: url("230ffe84-7e0c-4bb5-bca8-36d6c44a1a45") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans Mono";
+  src: url("706c97e7-70e4-4b47-9df9-a9fc03319039") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans Mono";
+  src: url("8d8c02ad-560d-47fc-9771-7557a6a8aea8") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans Mono";
+  src: url("1b0f8e79-bc60-497a-a49c-8dd584150538") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* PolySans Wide — used sparingly for the heading-wide register. */
+@font-face {
+  font-family: "PolySans Wide";
+  src: url("85129dcd-299c-4d6f-86f5-3b6226468859") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans Wide";
+  src: url("3bd8b602-09cd-4b54-9b13-69c5f7b55879") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "PolySans Wide";
+  src: url("c5b88656-f5db-49e5-b19b-4fcccf696970") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+ * FK Roman Standard — serif, body / pull-quote use only.
+ * ============================================================ */
+
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("2f387b3a-0f53-41a1-b781-1ce2ccf852b6") format("opentype");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("098d523b-b5c3-4fb1-9933-c464564c47de") format("opentype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("f8a41e43-5047-4999-a8ad-8fc08730e327") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("fc282e36-d4b3-4d42-8c03-5638d2c060cf") format("opentype");
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("73716ef6-63bb-4c2f-b255-542b58bc6f3e") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("a495a074-dd27-4539-9117-8e3cd0ada53d") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("c9f0418d-fc57-4517-9526-0ac9f97095ac") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("a6f8872e-d9a0-4852-83fe-591d43fbc4ba") format("opentype");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("dead6210-409f-4c00-b2f9-d6141724800b") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("c562f345-4489-4b68-b768-1ffe9dbd49a6") format("opentype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("f359bc6e-fdaf-4f0d-b360-6a8de0fb55e0") format("opentype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "FK Roman Standard";
+  src: url("ce38572a-188c-407c-8314-398ff48c382b") format("opentype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+
+:root {
+  /* ---------- COLORS ---------------------------------------- */
+
+  /* Primary hazards */
+  --color-jelly-mint:        #3cffd0;
+  --color-verge-ultraviolet: #5200ff;
+
+  /* Secondary & accent */
+  --color-console-mint:      #309875;
+  --color-deep-link-blue:    #3860be;
+  --color-focus-cyan:        #1eaedb;
+  --color-purple-rule:       #3d00bf;
+
+  /* Surface & background */
+  --color-canvas-black:      #131313;
+  --color-surface-slate:     #2d2d2d;
+  --color-image-frame:       #313131;
+  --color-hazard-white:      #ffffff;
+  --color-absolute-black:    #000000;
+
+  /* Neutrals & text */
+  --color-text-primary:      #ffffff;
+  --color-text-secondary:    #949494;
+  --color-text-muted:        #e9e9e9;
+  --color-text-inverted:     #131313;
+
+  /* Semantic */
+  --color-focus-ring:        #1eaedb;
+  --color-overlay-black:     rgba(0, 0, 0, 0.33);
+  --color-dim-gray:          #8c8c8c;
+
+  /* Accent tile palette (story blocks) */
+  --tile-mint:               #3cffd0;
+  --tile-ultraviolet:        #5200ff;
+  --tile-yellow:             #ffe600;
+  --tile-pink:               #ff7ad9;
+  --tile-orange:             #ff6a13;
+  --tile-electric-blue:      #2a5cff;
+  --tile-white:              #ffffff;
+
+  /* Semantic aliases */
+  --fg-1:                    var(--color-text-primary);     /* headlines / display */
+  --fg-2:                    var(--color-text-muted);       /* body */
+  --fg-3:                    var(--color-text-secondary);   /* metadata, byline */
+  --fg-inverted:             var(--color-text-inverted);    /* text on light tiles */
+  --bg-canvas:               var(--color-canvas-black);
+  --bg-slate:                var(--color-surface-slate);
+  --border-quiet:            var(--color-image-frame);
+  --border-hairline:         var(--color-hazard-white);
+  --border-active:           var(--color-jelly-mint);
+  --border-promo:            var(--color-verge-ultraviolet);
+  --border-rail:             var(--color-purple-rule);
+  --link-hover:              var(--color-deep-link-blue);
+
+  /* ---------- TYPE FAMILIES --------------------------------- */
+
+  --font-display: "Manuka", "Archivo Black", Impact, Helvetica, sans-serif;
+  --font-sans:    "PolySans", "Space Grotesk", Helvetica, Arial, sans-serif;
+  --font-mono:    "PolySans Mono", "Space Mono", "Courier New", Courier, monospace;
+  --font-serif:   "FK Roman Standard", "Newsreader", Georgia, serif;
+  --font-wide:    "PolySans Wide", "PolySans", Helvetica, Arial, sans-serif;
+
+  /* ---------- TYPE SCALE ------------------------------------ */
+
+  /* Display — Manuka (Klim).
+   * Empirical: Manuka Black (900) at hero scale needs ~0.95 leading to
+   * avoid descender/ascender collisions between lines. The Verge brief's
+   * 0.80 figure assumes a lighter Manuka cut or aggressive optical
+   * compensation we don't have in the trial files. Lighter Manuka weights
+   * (Bold 700, Regular 400) can safely use 0.80–0.85; tune per usage. */
+  --display-leading:           0.95;
+
+  --type-hero-size:            6.69rem;  /* 107px */
+  --type-hero-tracking:        1.07px;
+  --type-secondary-display:    5.63rem;  /* 90px */
+  --type-tertiary-display:     3.75rem;  /* 60px */
+
+  /* Sans headlines + body */
+  --type-h-large:              2.13rem;  /* 34px / 700 / 1.00 */
+  --type-h-wide:               2rem;     /* 32px / 400 / 1.10 / 0.32px */
+  --type-h-medium:             1.5rem;   /* 24px / 700 / 1.00 */
+  --type-h-small:              1.25rem;  /* 20px / 700 / 1.00 */
+  --type-light-cap:            1.19rem;  /* 19px / 300 / 1.20 / 1.9px */
+  --type-cap-xl:               1.13rem;  /* 18px / 400 / 1.10 / 1.8px */
+  --type-bold-body:            1rem;     /* 16px / 700 / 1.00 */
+  --type-body-relaxed:         1rem;     /* 16px / 500 / 1.60 */
+  --type-label:                0.94rem;  /* 15px / 400 / 1.20 / 0.15px */
+  --type-body-compact:         0.81rem;  /* 13px / 400 / 1.60 */
+  --type-eyebrow:              0.75rem;  /* 12px / 400 / 1.30 / 1.8px */
+  --type-tag:                  0.75rem;  /* 12px / 400 / 1.20 / 0.72px */
+  --type-caption-micro:        0.69rem;  /* 11px / 400 / 1.20 / 1.1px */
+  --type-meta-nano:            0.63rem;  /* 10px / 500 / 1.40 / 1.5px */
+
+  /* Mono */
+  --type-mono-button:          0.75rem;  /* 12px / 600 / 2.00 / 1.5px UPPERCASE */
+  --type-mono-timestamp:       0.69rem;  /* 11px / 500-600 / 1.20 / 1.1-1.8px */
+
+  /* Serif */
+  --type-serif-body:           1rem;     /* 16px / 400 / 1.30 / -0.16px */
+  --type-serif-caption:        1.25rem;  /* 20px / 400 / 1.20 */
+
+  /* ---------- SPACING --------------------------------------- */
+  /* 8px base unit; the irregular values (5/9/14/15/25) are
+   * intentional — they're used inside buttons and pills. */
+
+  --space-1:  1px;
+  --space-2:  2px;
+  --space-4:  4px;
+  --space-5:  5px;
+  --space-6:  6px;
+  --space-8:  8px;
+  --space-9:  9px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-14: 14px;
+  --space-15: 15px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-25: 25px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+
+  /* ---------- RADIUS ---------------------------------------- */
+
+  --radius-2:    2px;     /* inputs, typewriter tags */
+  --radius-3:    3px;     /* inline images */
+  --radius-4:    4px;     /* nested images, small buttons */
+  --radius-20:  20px;     /* standard pill cards */
+  --radius-24:  24px;     /* feature tiles, primary button */
+  --radius-30:  30px;     /* promotional outlined buttons */
+  --radius-40:  40px;     /* loudest outlined CTA pills */
+  --radius-pill: 9999px;  /* unconstrained pills */
+  --radius-round: 50%;    /* avatars, icon buttons */
+
+  /* ---------- DEPTH (1px borders only) ---------------------- */
+
+  --depth-image:    inset 0 0 0 1px var(--border-quiet);
+  --depth-quiet:    inset 0 0 0 1px var(--border-hairline);
+  --depth-active:   inset 0 0 0 1px var(--border-active);
+  --depth-promo:    inset 0 0 0 1px var(--border-promo);
+  --depth-atmosphere: 0 0 0 1px var(--color-overlay-black);
+  --depth-tab-underline: inset 0 -1px 0 0 var(--color-jelly-mint);
+
+  /* ---------- MOTION ---------------------------------------- */
+
+  --motion-fast: 150ms ease;
+  --motion-base: 180ms ease;
+}
+
+/* ============================================================
+ * Baseline
+ * ============================================================ */
+
+* { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg-canvas);
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  padding: 0;
+}
+
+::selection {
+  background: var(--color-jelly-mint);
+  color: var(--color-absolute-black);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--motion-fast);
+}
+a:hover { color: var(--link-hover); }
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+ * Semantic typography classes
+ * ============================================================ */
+
+.vl-hero {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--type-hero-size);
+  line-height: var(--display-leading);
+  letter-spacing: var(--type-hero-tracking);
+  color: var(--fg-1);
+}
+
+.vl-display-2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--type-secondary-display);
+  line-height: var(--display-leading);
+}
+
+.vl-display-3 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--type-tertiary-display);
+  line-height: var(--display-leading);
+}
+
+.vl-h1, h1 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--type-h-large);
+  line-height: 1.0;
+  margin: 0;
+}
+
+.vl-h-wide {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-h-wide);
+  line-height: 1.1;
+  letter-spacing: 0.32px;
+}
+
+.vl-h2, h2 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--type-h-medium);
+  line-height: 1.0;
+  margin: 0;
+}
+
+.vl-h3, h3 {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--type-h-small);
+  line-height: 1.0;
+  margin: 0;
+}
+
+.vl-light-cap {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--type-light-cap);
+  line-height: 1.2;
+  letter-spacing: 1.9px;
+  text-transform: uppercase;
+}
+
+.vl-cap-xl {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-cap-xl);
+  line-height: 1.1;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.vl-body, p {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--type-body-relaxed);
+  line-height: 1.6;
+  color: var(--fg-2);
+  margin: 0;
+}
+
+.vl-body-bold {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--type-bold-body);
+  line-height: 1.0;
+}
+
+.vl-label {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-label);
+  line-height: 1.2;
+  letter-spacing: 0.15px;
+}
+
+.vl-body-compact {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-body-compact);
+  line-height: 1.6;
+}
+
+.vl-eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-eyebrow);
+  line-height: 1.3;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.vl-tag {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-tag);
+  line-height: 1.2;
+  letter-spacing: 0.72px;
+  text-transform: uppercase;
+}
+
+.vl-caption-micro {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--type-caption-micro);
+  line-height: 1.2;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.vl-meta-nano {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--type-meta-nano);
+  line-height: 1.4;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.vl-mono-button {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--type-mono-button);
+  line-height: 2.0;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.vl-mono-timestamp {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--type-mono-timestamp);
+  line-height: 1.2;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.vl-serif-body {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--type-serif-body);
+  line-height: 1.3;
+  letter-spacing: -0.16px;
+}
+
+.vl-serif-caption {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--type-serif-caption);
+  line-height: 1.2;
+}
+
+/* ============================================================
+ * Utility — Voltline color helpers
+ * ============================================================ */
+
+.vl-mint { color: var(--color-jelly-mint); }
+.vl-uv   { color: var(--color-verge-ultraviolet); }
+.vl-secondary { color: var(--fg-3); }
+.vl-inverted  { color: var(--fg-inverted); }
+
+
+:root {
+  /* ---------- SC brand overrides ---------------------------- */
+
+  /* Logo blues (replaces mint as primary accent) */
+  --sc-red-deep:    #1c456b;   /* deep cube-facet blue */
+  --sc-red-shadow:  #193d5e;
+  --sc-red-rust:    #006a8c;
+  --sc-red:         #1f4f79;   /* primary brand blue (logo text + face) */
+  --sc-red-bright:  #3f92b6;   /* bright cube-facet blue */
+
+  /* Logo steel facets */
+  --sc-steel-100:   #ebedef;
+  --sc-steel-200:   #c3c6ca;
+  --sc-steel-300:   #9aa0a5;
+  --sc-steel-400:   #79868f;
+  --sc-steel-500:   #65727e;
+  --sc-steel-600:   #4d5965;
+  --sc-steel-700:   #2b3038;
+  --sc-steel-800:   #1e2631;
+  --sc-steel-900:   #131313;
+
+  /* Override Voltline's hazard palette so all existing
+   * components automatically inherit the SC brand. */
+  --color-jelly-mint:        var(--sc-red);
+  --color-console-mint:      var(--sc-red-deep);
+  --color-verge-ultraviolet: var(--sc-steel-800);
+  --color-purple-rule:       var(--sc-steel-700);
+  --color-deep-link-blue:    var(--sc-red-bright);
+  --color-focus-cyan:        var(--sc-red-bright);
+  --color-focus-ring:        var(--sc-red-bright);
+
+  /* Tile palette swap — the SC brand uses red as its primary
+   * loud fill, paired with steel grays. No mint, no UV. */
+  --tile-mint:               var(--sc-red);
+  --tile-ultraviolet:        var(--sc-steel-800);
+  --tile-orange:             var(--sc-red-bright);
+  --tile-pink:               var(--sc-steel-200);
+  --tile-yellow:             var(--sc-steel-100);
+  --tile-electric-blue:      var(--sc-steel-700);
+  --tile-white:              #ffffff;
+
+  /* Re-bind borders/links to SC red */
+  --border-active: var(--sc-red);
+  --border-promo:  var(--sc-red-bright);
+  --border-rail:   var(--sc-steel-700);
+  --link-hover:    var(--sc-red-bright);
+
+  --depth-active:        inset 0 0 0 1px var(--sc-red);
+  --depth-promo:         inset 0 0 0 1px var(--sc-red-bright);
+  --depth-tab-underline: inset 0 -1px 0 0 var(--sc-red);
+
+  /* Tweakable density */
+  --sc-container-pad: 48px;
+  --sc-feed-gap: 28px;
+}
+
+::selection {
+  background: var(--sc-red);
+  color: #fff;
+}
+
+/* ============================================================
+ * Layout primitives
+ * ============================================================ */
+
+.sc-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px var(--sc-container-pad) 64px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+ * Nav — responsive collapse so the Contact CTA never clips
+ * ============================================================ */
+.sc-nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 14px 24px;
+  background: rgba(13, 13, 13, 0.72);
+  border-radius: 24px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  position: sticky;
+  top: 12px;
+  z-index: 50;
+}
+.sc-nav__links { display: flex; gap: 22px; align-items: center; }
+.sc-nav__divider { width: 1px; height: 20px; background: var(--sc-steel-700); }
+.sc-nav__brand-words { display: flex; flex-direction: column; gap: 2px; line-height: 1; }
+
+@media (max-width: 1100px) {
+  .sc-nav { gap: 16px; padding: 12px 18px; }
+  .sc-nav__links { gap: 16px; }
+}
+@media (max-width: 960px) {
+  .sc-nav__logo { height: 36px !important; }
+  .sc-nav__links { gap: 12px; }
+  .sc-nav__divider { display: none; }
+}
+@media (max-width: 820px) {
+  .sc-nav__cta-label { display: none; }
+  .sc-nav__cta { padding: 12px !important; }
+}
+@media (max-width: 720px) {
+  .sc-nav__links { display: none; }
+}
+
+/* ============================================================
+ * Hero headline — display font's 0.95 leading is fine for one-line
+ * heroes, but our headlines have a red-accent span that wraps to
+ * 3-4 lines. Manuka glyph descenders reach below the line-box at
+ * hero scale, so we need both looser leading AND a real bottom pad.
+ * ============================================================ */
+.sc-hero-h1 {
+  line-height: 1.12 !important;
+  padding-bottom: 14px;
+}
+.sc-hero-deck-gap { margin-top: 12px; }
+
+html {
+  background: #131313; /* fallback dark canvas shown behind z-index:-1 elements */
+}
+:root[data-theme="light"] html,
+html:has([data-theme="light"]) {
+  background: #f5f4f0;
+}
+
+body {
+  background: transparent;
+  min-height: 100vh;
+  font-feature-settings: "ss01", "ss02";
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 24px;
+  pointer-events: none;
+  border: 1px dashed rgba(255,255,255,0.04);
+  border-radius: 24px;
+  z-index: 0;
+}
+
+/* Subtle hazard tape — used at the foot of hero sections. */
+.sc-hazard-tape {
+  height: 14px;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      var(--sc-red) 0 18px,
+      var(--sc-steel-900) 18px 36px
+    );
+  border-radius: 2px;
+}
+
+/* Helper — image frame */
+.sc-frame {
+  background: var(--sc-steel-700);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px var(--color-image-frame);
+  position: relative;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+}
+.sc-frame__label {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+.sc-frame__placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  background:
+    radial-gradient(circle at 25% 35%, rgba(31,79,121,0.18), transparent 55%),
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 22px,
+      rgba(255,255,255,0.025) 22px 23px
+    );
+}
+
+/* Tabular figures for stat counters */
+.sc-tnum { font-variant-numeric: tabular-nums; }
+
+/* Print-friendly link underlines for hovered headlines */
+a.sc-link:hover { color: var(--sc-red-bright); }
+
+/* ============================================================
+ * Client logo marquee — seamless infinite auto-scroll
+ * ============================================================ */
+.sc-marquee-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 8px 0;
+}
+.sc-marquee-heading { color: #fff; }
+
+.sc-marquee {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  /* edge fade — content dissolves into the canvas at both ends */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 9%, #000 91%, transparent 100%);
+}
+.sc-marquee__track {
+  display: flex;
+  width: max-content;
+  gap: 0;
+  animation: sc-marquee-scroll var(--marquee-speed, 42s) linear infinite;
+  will-change: transform;
+}
+.sc-marquee:hover .sc-marquee__track { animation-play-state: paused; }
+
+@keyframes sc-marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sc-marquee__track { animation-duration: 120s; }
+}
+
+/* Each logo cell — monochrome by default, colour + lift on hover */
+.sc-logo-cell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 44px;
+  height: 84px;
+  color: var(--sc-steel-300);
+  position: relative;
+  transition: color 200ms ease, opacity 200ms ease;
+  opacity: 0.62;
+  flex-shrink: 0;
+}
+/* hairline separators between cells */
+.sc-logo-cell::after {
+  content: "";
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 1px; height: 30px;
+  background: var(--sc-steel-700);
+}
+.sc-marquee:hover .sc-logo-cell { opacity: 0.34; }
+.sc-marquee .sc-logo-cell:hover {
+  color: #fff;
+  opacity: 1;
+}
+.sc-marquee .sc-logo-cell:hover svg { color: var(--sc-red); }
+
+/* Light theme */
+[data-theme="light"] .sc-marquee-heading { color: #131313; }
+[data-theme="light"] .sc-logo-cell { color: var(--sc-steel-500); }
+[data-theme="light"] .sc-logo-cell::after { background: var(--sc-steel-200); }
+[data-theme="light"] .sc-marquee .sc-logo-cell:hover { color: #131313; }
+[data-theme="light"] .sc-marquee .sc-logo-cell:hover svg { color: var(--sc-red); }
+
+/* ============================================================
+ * Light theme — surface inversion via [data-theme="light"]
+ * ------------------------------------------------------------
+ * Most of the design uses inline-style hex colors that React
+ * sets via el.style.* and the browser normalizes to rgb() in
+ * the serialized style attribute. We use attribute substring
+ * selectors against those rgb() forms to flip the common
+ * surfaces. Saturated accent tiles (red, slate) stay as-is —
+ * they read fine on a light canvas.
+ * ============================================================ */
+
+:root[data-theme="light"] {
+  --color-canvas-black:   #f5f4f0;
+  --bg-canvas:            #f5f4f0;
+  --color-surface-slate:  #e9e7e1;
+  --bg-slate:             #e9e7e1;
+  --color-image-frame:    #d4d4cf;
+  --color-text-primary:   #131313;
+  --color-text-muted:     #2d2d2d;
+  --color-text-secondary: #5d5d5d;
+  --color-text-inverted:  #ffffff;
+  --color-hazard-white:   #131313;          /* "hairline" reads as dark on light bg */
+  --color-overlay-black:  rgba(0,0,0,0.08);
+  --color-dim-gray:       #6e6e6e;
+  --border-hairline:      #131313;
+  --depth-quiet:          inset 0 0 0 1px #131313;
+  --fg-1:                 #131313;
+  --fg-2:                 #2d2d2d;
+  --fg-3:                 #5d5d5d;
+}
+
+:root[data-theme="light"] body { background: transparent !important; color: #131313 !important; }
+:root[data-theme="light"] body::before { border-color: rgba(19,19,19,0.06); }
+
+::selection { /* keep red selection in both modes */ }
+
+/* Nav inverts to cream-on-white with dark hairline */
+[data-theme="light"] .sc-nav { background: #ffffff !important; box-shadow: inset 0 0 0 1px #131313 !important; }
+[data-theme="light"] .sc-nav__divider { background: #d4d4cf; }
+[data-theme="light"] .sc-nav .sc-theme-toggle { border-color: #d4d4cf; }
+/* Light text in nav nav-links → dark, EXCEPT when active/hover (red stays) */
+[data-theme="light"] .sc-nav__links a { color: #131313; }
+[data-theme="light"] .sc-nav__links a:hover { color: var(--sc-red-bright); }
+/* Logo: swap to dark-text version is handled in JSX (theme prop) */
+
+/* Quiet card surfaces — #131313 → white */
+[data-theme="light"] [style*="background: rgb(19, 19, 19)"],
+[data-theme="light"] [style*="background:rgb(19,19,19)"],
+[data-theme="light"] [style*="background-color: rgb(19, 19, 19)"] {
+  background: #ffffff !important;
+}
+/* Slate surfaces — #2d2d2d → soft warm gray */
+[data-theme="light"] [style*="background: rgb(45, 45, 45)"],
+[data-theme="light"] [style*="background:rgb(45,45,45)"],
+[data-theme="light"] [style*="background-color: rgb(45, 45, 45)"] {
+  background: #e9e7e1 !important;
+}
+/* The user's direct-edit nav bg (rgb 36, 36, 36) → white */
+[data-theme="light"] [style*="background-color: rgb(36, 36, 36)"] {
+  background-color: #ffffff !important;
+}
+/* Steel-800 cards (org chart background) → mid-cream */
+[data-theme="light"] [style*="background: rgb(30, 38, 49)"],
+[data-theme="light"] [style*="background-color: rgb(30, 38, 49)"] {
+  background: #2d2d2d !important;       /* stays dark — it's an accent surface, not body */
+  color: #ffffff !important;
+}
+
+/* White text on canvas → dark text */
+[data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4, [data-theme="light"] h5 {
+  /* default — gets overridden inside saturated tiles via more-specific rules below */
+}
+[data-theme="light"] [style*="color: rgb(255, 255, 255)"] {
+  color: #131313 !important;
+}
+[data-theme="light"] [style*="color: rgb(233, 233, 233)"] { color: #2d2d2d !important; }
+[data-theme="light"] [style*="color: rgb(148, 148, 148)"] { color: #6e6e6e !important; }
+/* Translucent-white text (secondary/meta copy authored for the dark canvas) →
+ * translucent-dark, so it never goes white-on-white in light mode. Substring
+ * match catches any alpha value used. */
+[data-theme="light"] [style*="color: rgba(255, 255, 255,"] { color: rgba(19,19,19,0.65) !important; }
+
+/* Inner-shadow hairlines: white outline → dark outline */
+[data-theme="light"] [style*="inset 0 0 0 1px rgb(255, 255, 255)"],
+[data-theme="light"] [style*="inset 0 0 0 1px #ffffff"] {
+  box-shadow: inset 0 0 0 1px #131313 !important;
+}
+/* Steel-700 outlines stay slightly lighter */
+[data-theme="light"] [style*="inset 0 0 0 1px rgb(43, 48, 56)"],
+[data-theme="light"] [style*="inset 0 0 0 1px rgb(77, 89, 101)"] {
+  box-shadow: inset 0 0 0 1px #c3c6ca !important;
+}
+
+/* Saturated accent tiles (red / dark-red / steel-800-as-accent) keep their
+ * fill AND keep their internal text white. Re-assert against the global
+ * "white text → dark" rule above.
+ * NOTE: React serializes `background: 'var(--sc-red)'` to the style
+ * attribute as the literal `var(...)` string, NOT the resolved rgb().
+ * So we have to match BOTH forms — rgb() (for explicit hex inline styles)
+ * and var() (for the much more common CSS-variable inline styles).
+ * ----------------------------------------------------------- */
+
+/* match list, single source of truth */
+[data-theme="light"] [style*="background: rgb(31, 79, 121)"],
+[data-theme="light"] [style*="background: rgb(63, 146, 182)"],
+[data-theme="light"] [style*="background: rgb(28, 69, 107)"],
+[data-theme="light"] [style*="background: rgb(25, 61, 94)"],
+[data-theme="light"] [style*="background: rgb(0, 106, 140)"],
+[data-theme="light"] [style*="background: rgb(30, 38, 49)"],
+[data-theme="light"] [style*="background: rgb(43, 48, 56)"],
+[data-theme="light"] [style*="background: rgb(101, 114, 126)"],
+[data-theme="light"] [style*="background: var(--sc-red)"],
+[data-theme="light"] [style*="background: var(--sc-red-deep)"],
+[data-theme="light"] [style*="background: var(--sc-red-bright)"],
+[data-theme="light"] [style*="background: var(--sc-red-rust)"],
+[data-theme="light"] [style*="background: var(--sc-red-shadow)"],
+[data-theme="light"] [style*="background: var(--sc-steel-800)"],
+[data-theme="light"] [style*="background: var(--sc-steel-700)"],
+[data-theme="light"] [style*="background: var(--sc-steel-600)"],
+[data-theme="light"] [style*="background: var(--sc-steel-500)"],
+[data-theme="light"] [style*="background:var(--sc-red)"],
+[data-theme="light"] [style*="background:var(--sc-red-deep)"],
+[data-theme="light"] [style*="background:var(--sc-red-bright)"],
+[data-theme="light"] [style*="background:var(--sc-steel-800)"],
+[data-theme="light"] [style*="background:var(--sc-steel-700)"],
+[data-theme="light"] [style*="background:var(--sc-steel-500)"] {
+  color: #ffffff !important;
+}
+
+/* All descendant text inside those saturated tiles → white */
+[data-theme="light"] [style*="background: rgb(31, 79, 121)"]  *,
+[data-theme="light"] [style*="background: rgb(63, 146, 182)"]  *,
+[data-theme="light"] [style*="background: rgb(28, 69, 107)"]  *,
+[data-theme="light"] [style*="background: rgb(25, 61, 94)"]   *,
+[data-theme="light"] [style*="background: rgb(0, 106, 140)"]  *,
+[data-theme="light"] [style*="background: rgb(30, 38, 49)"]   *,
+[data-theme="light"] [style*="background: rgb(43, 48, 56)"]   *,
+[data-theme="light"] [style*="background: rgb(101, 114, 126)"] *,
+[data-theme="light"] [style*="background: var(--sc-red)"]          *,
+[data-theme="light"] [style*="background: var(--sc-red-deep)"]     *,
+[data-theme="light"] [style*="background: var(--sc-red-bright)"]   *,
+[data-theme="light"] [style*="background: var(--sc-red-rust)"]     *,
+[data-theme="light"] [style*="background: var(--sc-red-shadow)"]   *,
+[data-theme="light"] [style*="background: var(--sc-steel-800)"]    *,
+[data-theme="light"] [style*="background: var(--sc-steel-700)"]    *,
+[data-theme="light"] [style*="background: var(--sc-steel-600)"]    *,
+[data-theme="light"] [style*="background: var(--sc-steel-500)"]    *,
+[data-theme="light"] [style*="background:var(--sc-red)"]           *,
+[data-theme="light"] [style*="background:var(--sc-red-deep)"]      *,
+[data-theme="light"] [style*="background:var(--sc-red-bright)"]    *,
+[data-theme="light"] [style*="background:var(--sc-steel-800)"]     *,
+[data-theme="light"] [style*="background:var(--sc-steel-700)"]     *,
+[data-theme="light"] [style*="background:var(--sc-steel-500)"]     * {
+  color: #ffffff !important;
+}
+
+/* FeatureTile CTA hover inverts to a light pill (JS sets background:#fff, color:tile-bg) —
+ * the descendant-white-forcing rule above would otherwise stomp that dark hover text
+ * back to white (white-on-white). Higher specificity + !important wins here. */
+[data-theme="light"] [style*="background: var(--sc-red)"] button:hover,
+[data-theme="light"] [style*="background: var(--sc-red-deep)"] button:hover,
+[data-theme="light"] [style*="background: var(--sc-red-bright)"] button:hover,
+[data-theme="light"] [style*="background: var(--sc-steel-800)"] button:hover,
+[data-theme="light"] [style*="background: var(--sc-steel-700)"] button:hover,
+[data-theme="light"] [style*="background: var(--sc-steel-600)"] button:hover,
+[data-theme="light"] [style*="background: var(--sc-steel-500)"] button:hover,
+[data-theme="light"] [style*="background: rgb(170, 46, 46)"] button:hover,
+[data-theme="light"] [style*="background: rgb(195, 53, 53)"] button:hover,
+[data-theme="light"] [style*="background: rgb(123, 32, 32)"] button:hover,
+[data-theme="light"] [style*="background: rgb(30, 38, 49)"] button:hover,
+[data-theme="light"] [style*="background: rgb(101, 114, 126)"] button:hover {
+  color: #131313 !important;
+}
+
+/* And keep any colored-tile element's background unchanged in light mode —
+ * earlier rules may have flipped it. */
+[data-theme="light"] [style*="background: var(--sc-red)"]          { background: var(--sc-red) !important; }
+[data-theme="light"] [style*="background: var(--sc-red-deep)"]     { background: var(--sc-red-deep) !important; }
+[data-theme="light"] [style*="background: var(--sc-red-bright)"]   { background: var(--sc-red-bright) !important; }
+[data-theme="light"] [style*="background: var(--sc-steel-800)"]    { background: var(--sc-steel-800) !important; }
+[data-theme="light"] [style*="background: var(--sc-steel-700)"]    { background: var(--sc-steel-700) !important; }
+[data-theme="light"] [style*="background: var(--sc-steel-500)"]    { background: var(--sc-steel-500) !important; }
+
+/* White-bg color-blocks (already light): force dark text */
+[data-theme="light"] [style*="background: rgb(255, 255, 255)"] *,
+[data-theme="light"] [style*="background:#fff"] * {
+  /* leave as authored; #fff blocks already use dark text */
+}
+
+/* Input fields */
+[data-theme="light"] input[style], [data-theme="light"] textarea[style] {
+  background: #ffffff !important;
+  color: #131313 !important;
+  border-color: #131313 !important;
+}
+
+/* Image frame placeholder backdrop */
+[data-theme="light"] .sc-frame { background: #d4d4cf; color: #5d5d5d; }
+[data-theme="light"] .sc-frame__label { color: rgba(19,19,19,0.6); }
+[data-theme="light"] .sc-frame__placeholder {
+  color: rgba(19,19,19,0.5);
+  background:
+    radial-gradient(circle at 25% 35%, rgba(31,79,121,0.10), transparent 55%),
+    repeating-linear-gradient(45deg, transparent 0 22px, rgba(0,0,0,0.04) 22px 23px);
+}
+
+/* ── Glass CSS variables (theme-aware) ────────────────────── */
+:root {
+  --text-primary: #fff;
+  --text-secondary: #949494;
+  --text-muted: #e9e9e9;
+  --sc-glass-bg:      rgba(255,255,255,0.035);
+  --sc-glass-bg-2:    rgba(255,255,255,0.05);
+  --sc-glass-border:  rgba(255,255,255,0.07);
+  --sc-glass-border-2:rgba(255,255,255,0.10);
+  --sc-glass-hover:   rgba(31,79,121,0.07);
+}
+[data-theme="light"] {
+  --text-primary: #131313;
+  --text-secondary: #5d5d5d;
+  --text-muted: #2d2d2d;
+  --sc-glass-bg:      rgba(255,255,255,0.035);
+  --sc-glass-bg-2:    rgba(255,255,255,0.05);
+  --sc-glass-border:  rgba(255,255,255,0.07);
+  --sc-glass-border-2:rgba(255,255,255,0.10);
+  --sc-glass-hover:   rgba(31,79,121,0.07);
+}
+[data-theme="light"] {
+  --sc-glass-bg:      rgba(255,255,255,0.88);
+  --sc-glass-bg-2:    rgba(255,255,255,0.92);
+  --sc-glass-border:  rgba(0,0,0,0.09);
+  --sc-glass-border-2:rgba(0,0,0,0.12);
+  --sc-glass-hover:   rgba(31,79,121,0.06);
+}
+
+/* Light mode: make all backdrop-filter glass panels visible */
+[data-theme="light"] [style*="backdrop-filter"],
+[data-theme="light"] [style*="-webkit-backdrop-filter"] {
+  background: rgba(255,255,255,0.88) !important;
+  border-color: rgba(0,0,0,0.09) !important;
+}
+
+/* ============================================================
+ * TECH REDESIGN — Glass, brackets, animations, grid overlay
+ * ============================================================ */
+
+/* ── Glass card surface ───────────────────────────────────── */
+.sc-glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+[data-theme="light"] .sc-glass {
+  background: rgba(255,255,255,0.88) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* ── Blue bracket corners ─────────────────────────────────── */
+.sc-bracket { position: relative; }
+.sc-bracket::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: -1px;
+  width: 22px; height: 22px;
+  border-top: 1.5px solid var(--sc-red);
+  border-left: 1.5px solid var(--sc-red);
+  pointer-events: none;
+  z-index: 2;
+}
+.sc-bracket::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; right: -1px;
+  width: 22px; height: 22px;
+  border-bottom: 1.5px solid var(--sc-red);
+  border-right: 1.5px solid var(--sc-red);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── Entrance transitions (class-toggled, not CSS animation) ─ */
+.sc-anim-wrap > * {
+  transition: transform 0.65s ease, opacity 0.65s ease;
+}
+.sc-anim-wrap > *:nth-child(2) { transition-delay: 0.10s; }
+.sc-anim-wrap > *:nth-child(3) { transition-delay: 0.22s; }
+.sc-anim-wrap > *:nth-child(4) { transition-delay: 0.36s; }
+.sc-anim-wrap > *:nth-child(5) { transition-delay: 0.50s; }
+
+/* ── Blue text glow ───────────────────────────────────────── */
+.sc-glow {
+  text-shadow: 0 0 40px rgba(31,79,121,0.55), 0 0 80px rgba(31,79,121,0.22);
+}
+
+/* ── Pulse dot (status indicator) ────────────────────────── */
+@keyframes sc-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+.sc-pulse-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--sc-red);
+  animation: sc-pulse 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ── Updated nav — HUD bar ────────────────────────────────── */
+.sc-nav {
+  display: flex;
+  align-items: stretch;
+  height: 56px;
+  padding: 0;
+  gap: 0;
+  background: rgba(10,10,10,0.90);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-top: 1px solid rgba(31,79,121,0.55);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: none;
+  backdrop-filter: blur(32px) saturate(140%);
+  -webkit-backdrop-filter: blur(32px) saturate(140%);
+  position: sticky;
+  top: 12px;
+  z-index: 50;
+}
+[data-theme="light"] .sc-nav {
+  background: rgba(245,244,240,0.92) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+  border-top-color: rgba(31,79,121,0.45) !important;
+  box-shadow: none !important;
+}
+
+/* Nav links now fill full height */
+.sc-nav__links {
+  display: flex;
+  flex: 1;
+  align-items: stretch;
+  gap: 0;
+}
+.sc-nav__link {
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 2px solid transparent;
+  transition: color 150ms ease, background 150ms ease, border-bottom-color 150ms ease;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+.sc-nav__link:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.03);
+}
+.sc-nav__link--active {
+  color: #fff;
+  background: rgba(255,255,255,0.04);
+  border-bottom-color: var(--sc-red);
+}
+[data-theme="light"] .sc-nav__link       { color: rgba(19,19,19,0.45); border-right-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .sc-nav__link:hover { color: #131313; }
+[data-theme="light"] .sc-nav__link--active { color: #131313; border-bottom-color: var(--sc-red); }
+
+@media (max-width: 1100px) {
+  .sc-nav__link { padding: 0 12px; font-size: 9.5px; }
+}
+@media (max-width: 960px) {
+  .sc-nav__logo { height: 34px !important; }
+}
+@media (max-width: 820px) {
+  .sc-nav__cta-label { display: none; }
+}
+@media (max-width: 720px) {
+  .sc-nav__links { display: none; }
+}
+
+/* ── Service card grid ────────────────────────────────────── */
+.sc-service-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  overflow: hidden;
+}
+@media (max-width: 960px) {
+  .sc-service-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .sc-service-grid { grid-template-columns: 1fr; }
+}
+
+.sc-service-card {
+  padding: 36px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 2px solid transparent;
+  transition: background 200ms ease, border-bottom-color 180ms ease;
+  cursor: pointer;
+  position: relative;
+}
+.sc-service-card:last-child { border-right: none; }
+.sc-service-card:hover {
+  background: rgba(31,79,121,0.06);
+  border-bottom-color: var(--sc-red);
+}
+
+/* ── Work / article card ──────────────────────────────────── */
+.sc-work-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+.sc-work-card:hover {
+  border-color: rgba(31,79,121,0.3);
+  background: rgba(31,79,121,0.04);
+}
+[data-theme="light"] .sc-work-card { border-color: rgba(0,0,0,0.08); background: rgba(255,255,255,0.6); }
+[data-theme="light"] .sc-work-card:hover { border-color: rgba(31,79,121,0.3); }
+</style>
+  <link rel="icon" href="f6138a1f-d61e-4b52-b67a-afa348ef9d04" type="image/svg+xml">
+
+  <script src="23886bd8-e254-4cc2-9270-68ab58ec299a" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="1865a9eb-79cd-439b-a141-725695bfd56a" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="ab63e5b2-0f5f-4166-b78f-9be43a0310f3" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="7005a2f7-8378-407d-85d3-f2559a1c829f" crossorigin="anonymous"></script>
+  <script src="04ccdf3e-a83b-4331-a025-9327449fed20" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Tweaks helper (host protocol + form controls) -->
+  <script type="text/babel" src="f3b5b68a-40f8-4a71-8b82-be26ac93773c"></script>
+
+  <!-- Animated background -->
+  <script type="text/babel" src="f864d48f-949e-460d-9c5d-61578a9296c6"></script>
+
+  <!-- Shared components -->
+  <script type="text/babel" src="6b3d9efa-9b89-48f9-8a09-2e7337b7aace"></script>
+  <script type="text/babel" src="a52dc051-41bb-45b7-a2f3-d23cb2e25ed7"></script>
+  <script type="text/babel" src="02a76da1-8460-4a38-9ded-41f7fd0ccf94"></script>
+  <script type="text/babel" src="6d4bb654-1cea-460d-8ddd-c856d8842cb6"></script>
+  <script type="text/babel" src="5af5e491-0c88-412e-8fe8-962be7ca0a87"></script>
+  <script type="text/babel" src="64248d5a-8ced-41c6-9c0a-32b52c01187b"></script>
+
+  <!-- Pages -->
+  <script type="text/babel" src="397ec4e4-c0e7-46ad-a1fc-bc2ff9e87bf6"></script>
+  <script type="text/babel" src="1a71e50a-1b2f-4556-b587-13eea94f7c11"></script>
+  <script type="text/babel" src="edd53077-c199-4ae8-a0a5-56d7b4588362"></script>
+  <script type="text/babel" src="8322f386-d92d-43cc-889c-2561696086f6"></script>
+  <script type="text/babel" src="6ddae912-ce17-43f5-94f9-d7dde92e989a"></script>
+  <script type="text/babel" src="e8917889-dc09-46d2-bb57-35dd1d54e950"></script>
+  <script type="text/babel" src="a9bb45af-ef7d-4ce9-89bd-ec216297a394"></script>
+
+  <!-- App shell -->
+  <script type="text/babel" src="f9ce5f19-dc6f-483a-964c-7f9f339e23ff"></script>
+  <script type="text/babel">
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+
+
+</body></html>

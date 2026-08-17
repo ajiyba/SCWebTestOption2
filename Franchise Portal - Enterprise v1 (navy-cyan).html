@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Franchise Portal | Software Consultancy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{--navy-900:#070d15;--navy-800:#0b1420;--navy-700:#111d2c;--navy-600:#182a3d;--line:rgba(255,255,255,.10);--cyan:#3ad0f2;--cyan-dim:rgba(58,208,242,.16);--off:#eef2f5;--grey:#9aa6b1;--grey-dim:#6b7684;--amber:#c9a36a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy-800);color:var(--off);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Jost',sans-serif;font-weight:600;letter-spacing:-.01em;color:var(--off)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 32px}
+section{padding:112px 0}
+@media(max-width:700px){section{padding:72px 0}.wrap{padding:0 20px}}
+p{color:var(--grey);max-width:64ch}
+a{color:var(--cyan)}
+.eyebrow{display:block;font-family:'DM Sans',sans-serif;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:16px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:.95rem;border-radius:4px;border:1px solid transparent;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--cyan);color:var(--navy-900)}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--off)}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(7,13,21,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:20px 32px}
+.brand{font-family:'Jost',sans-serif;font-size:1.05rem;letter-spacing:.02em;color:var(--off)}
+.brand span{color:var(--cyan)}
+
+/* hero */
+.hero{padding:120px 0 96px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.05;max-width:16ch;margin-bottom:22px}
+.hero .promise{font-size:1.25rem;color:var(--off);max-width:46ch;margin-bottom:22px;font-weight:400}
+.hero .body{font-size:1.02rem;max-width:58ch;margin-bottom:36px}
+.hero .cta-row{display:flex;gap:16px;flex-wrap:wrap}
+
+/* trust bar */
+.trust{padding:28px 0;border-bottom:1px solid var(--line);background:var(--navy-700)}
+.trust .wrap{display:flex;gap:40px;flex-wrap:wrap;align-items:center}
+.trust span{font-size:.82rem;letter-spacing:.04em;color:var(--grey);font-family:'DM Sans',sans-serif}
+.trust strong{color:var(--off);font-weight:500}
+
+/* section head */
+.head{max-width:62ch;margin-bottom:48px}
+.head h2{font-size:clamp(1.8rem,3vw,2.4rem);margin-bottom:16px}
+
+/* problem */
+.problem{border-bottom:1px solid var(--line)}
+.gate-list{display:flex;flex-direction:column;gap:0}
+.gate-item{display:grid;grid-template-columns:28px 1fr;gap:20px;padding:26px 0;border-top:1px solid var(--line)}
+.gate-item:last-child{border-bottom:1px solid var(--line)}
+.gate-node{display:flex;flex-direction:column;align-items:center}
+.gate-node::before{content:"";width:9px;height:9px;background:var(--cyan);transform:rotate(45deg);flex:0 0 auto}
+.gate-item h4{font-family:'DM Sans',sans-serif;font-weight:600;font-size:1.02rem;color:var(--off);margin-bottom:6px}
+.gate-item p{font-size:.96rem}
+.problem-result{margin-top:36px;padding:26px 28px;border-left:2px solid var(--cyan);background:var(--navy-700)}
+.problem-result p{color:var(--off);max-width:70ch}
+
+/* solution pull quote */
+.solution{border-bottom:1px solid var(--line)}
+.pull{font-family:'Jost',sans-serif;font-weight:500;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.35;color:var(--off);max-width:38ch;margin:36px 0;position:relative;padding-left:28px;border-left:2px solid var(--cyan)}
+.solution .note{max-width:60ch}
+
+/* architecture diagram */
+.arch{border-bottom:1px solid var(--line);background:var(--navy-900)}
+.diagram{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:0;align-items:center;margin-top:56px}
+.d-box{border:1px solid var(--line);background:var(--navy-700);padding:28px 24px;text-align:left}
+.d-box.center{background:var(--navy-600);border-color:var(--cyan-dim)}
+.d-box .tag{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);display:block;margin-bottom:10px;font-family:'DM Sans',sans-serif}
+.d-box h4{font-family:'Jost',sans-serif;font-size:1.15rem;margin-bottom:10px}
+.d-box ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.d-box li{font-size:.84rem;color:var(--grey);position:relative;padding-left:14px}
+.d-box li::before{content:"—";position:absolute;left:0;color:var(--grey-dim)}
+.d-arrows{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:0 8px}
+.arrow-lbl{display:flex;flex-direction:column;align-items:center;gap:6px}
+.arrow-lbl svg{width:100%;height:14px}
+.arrow-lbl span{font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--grey);text-align:center}
+.arch-ref{margin-top:28px;font-size:.88rem;color:var(--grey)}
+@media(max-width:860px){.diagram{grid-template-columns:1fr}.d-arrows{flex-direction:row;justify-content:center;padding:14px 0}.arrow-lbl svg{width:60px}}
+
+/* capability tables */
+.cap-block{margin-bottom:64px}
+.cap-block:last-child{margin-bottom:0}
+.cap-block h3{font-size:1.3rem;margin-bottom:6px}
+.cap-block .sub{font-size:.92rem;margin-bottom:22px}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+table caption{display:none}
+th{text-align:left;font-family:'DM Sans',sans-serif;font-weight:600;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);padding:10px 18px 10px 0;border-bottom:1px solid var(--line)}
+td{padding:16px 18px 16px 0;border-bottom:1px solid var(--line);color:var(--grey);vertical-align:top}
+td:first-child,th:first-child{color:var(--off);font-weight:500;width:26%}
+tr:last-child td{border-bottom:1px solid var(--line)}
+.table-wrap{overflow-x:auto}
+.access-note{margin-top:22px;padding:18px 22px;background:var(--navy-700);border:1px solid var(--line);font-size:.9rem;color:var(--off)}
+.callout{margin-top:24px;padding:22px 26px;border:1px solid var(--cyan-dim);background:var(--cyan-dim)}
+.callout .eyebrow{margin-bottom:8px}
+.callout p{color:var(--off);font-size:.94rem}
+
+/* pending confirmation */
+.pending{margin:14px 0;padding:14px 18px;border:1px dashed var(--grey-dim);background:transparent;display:flex;flex-direction:column;gap:4px}
+.pending .lbl{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-family:'DM Sans',sans-serif}
+.pending .txt{font-size:.86rem;color:var(--grey);font-style:italic}
+
+/* workflow */
+.workflow-steps{display:flex;flex-direction:column}
+.wstep{display:grid;grid-template-columns:52px 1fr;gap:22px;padding:22px 0;border-top:1px solid var(--line);position:relative}
+.wstep:last-child{border-bottom:1px solid var(--line)}
+.wstep .n{font-family:'Jost',sans-serif;font-size:1.3rem;color:var(--cyan);font-weight:500}
+.wstep .sys{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--grey-dim);margin-bottom:4px}
+.wstep h4{font-size:1rem;font-family:'DM Sans',sans-serif;font-weight:600;color:var(--off);margin-bottom:4px}
+.wstep p{font-size:.9rem;margin:0}
+.wstep .out{font-size:.82rem;color:var(--cyan);margin-top:6px}
+.why-box{margin-top:32px;padding:24px 28px;border-left:2px solid var(--cyan);background:var(--navy-700)}
+.why-box p{color:var(--off);max-width:70ch}
+
+/* order flow - simple numbered inline */
+.oflow{display:flex;flex-direction:column;gap:0;margin-top:8px}
+.ostep{display:grid;grid-template-columns:36px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.ostep:last-child{border-bottom:1px solid var(--line)}
+.ostep .n{color:var(--cyan);font-family:'Jost',sans-serif;font-size:1rem}
+.ostep p{margin:0;font-size:.92rem;color:var(--off)}
+
+/* value table */
+.value-row{display:grid;grid-template-columns:1fr 1.6fr;gap:32px;padding:22px 0;border-top:1px solid var(--line)}
+.value-row:last-child{border-bottom:1px solid var(--line)}
+.value-row .outcome{font-family:'Jost',sans-serif;font-size:1.02rem;color:var(--off)}
+.value-row p{margin:0;font-size:.92rem}
+
+/* scope */
+.scope-list{display:flex;flex-direction:column;gap:0;margin-top:8px}
+.scope-item{display:grid;grid-template-columns:24px 1fr;gap:16px;padding:18px 0;border-top:1px solid var(--line);align-items:baseline}
+.scope-item:last-child{border-bottom:1px solid var(--line)}
+.scope-item .mark{color:var(--grey-dim);font-family:'Jost',sans-serif}
+.scope-item p{margin:0;color:var(--off);font-size:.95rem}
+.scope-note{margin-top:28px;font-size:.9rem;max-width:64ch}
+
+/* faq accordion */
+.faq-item{border-top:1px solid var(--line)}
+.faq-item:last-child{border-bottom:1px solid var(--line)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:'Jost',sans-serif;font-size:1.02rem;color:var(--off)}
+.faq-q .plus{font-family:'DM Sans',sans-serif;font-size:1.3rem;color:var(--cyan);transition:transform .2s ease;flex:0 0 auto}
+.faq-item[data-open="true"] .plus{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .25s ease}
+.faq-a-inner{padding:0 0 24px;font-size:.94rem;color:var(--grey)}
+
+/* closing cta */
+.closing{text-align:left;border-top:1px solid var(--line);background:var(--navy-900)}
+.closing h2{font-size:clamp(1.9rem,3.4vw,2.6rem);max-width:20ch;margin-bottom:18px}
+.closing p{margin-bottom:32px}
+
+footer{padding:40px 0;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--grey-dim)}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap nav-inner"><div class="brand">Software<span>·</span>Consultancy</div><a class="btn btn-ghost" href="SC%20Landing%20Page.html#products">Back to Products</a></div></nav>
+
+<header class="hero">
+<div class="wrap">
+<span class="eyebrow">Oracle Fusion Cloud · Franchise Operations</span>
+<h1>Franchise Portal</h1>
+<p class="promise">Extend Oracle Fusion to every franchisee — without extending Oracle Fusion licences.</p>
+<p class="body">A governed digital platform that connects a franchisor, its franchise network, and its point-of-sale estate to a single Oracle Fusion source of truth. Franchisees get real-time visibility of their balance, credit limit, invoices, receipts, and contracts. The franchisor gets controlled onboarding, enforced ordering discipline, and complete financial oversight — with every transaction executed inside Oracle Fusion, where it belongs.</p>
+<div class="cta-row"><a class="btn btn-primary" href="#contact">Request a Franchise Portal walkthrough</a><a class="btn btn-ghost" href="#architecture">See the architecture</a></div>
+</div>
+</header>
+
+<div class="trust"><div class="wrap">
+<span><strong>Oracle Cloud Excellence Implementer</strong></span>
+<span>Jordan · Saudi Arabia · GCC</span>
+<span>Reference deployment: <strong>Manarate POS</strong></span>
+</div></div>
+
+<section class="problem">
+<div class="wrap">
+<div class="head"><span class="eyebrow">01 · The business problem</span><h2>Franchise networks fail commercially in predictable places.</h2><p>And almost all of them are information problems before they are financial ones.</p></div>
+<div class="gate-list">
+<div class="gate-item"><div class="gate-node"></div><div><h4>Onboarding is undisciplined</h4><p>New franchise applications arrive by email and spreadsheet. Trade licences, commercial registrations, and guarantees are collected inconsistently. There is no audit trail showing who approved what, on what evidence, and when.</p></div></div>
+<div class="gate-item"><div class="gate-node"></div><div><h4>Franchisees cannot see their own position</h4><p>Balance enquiries, invoice copies, and credit-limit questions come to the franchisor's finance team by phone and WhatsApp. Finance becomes a lookup service instead of a control function.</p></div></div>
+<div class="gate-item"><div class="gate-node"></div><div><h4>Ordering leaks outside the approved channel</h4><p>Without a system-enforced path, franchisees source outside the network, eroding margin, brand consistency, and supply agreements.</p></div></div>
+<div class="gate-item"><div class="gate-node"></div><div><h4>Master data drifts</h4><p>Items, prices, and customer records maintained separately in the ERP and at the point of sale diverge within weeks. Reconciliation becomes a monthly forensic exercise.</p></div></div>
+</div>
+<div class="problem-result"><p>The result: the franchisor cannot answer basic questions — what is my true network exposure, which franchisees are over their credit limit, which contracts expire this quarter — without manual consolidation.</p></div>
+</div>
+</section>
+
+<section class="solution">
+<div class="wrap">
+<div class="head"><span class="eyebrow">02 · The solution</span><h2>One non-negotiable architectural principle.</h2><p>The Franchise Portal is a purpose-built web platform that sits between Oracle Fusion and the franchise network. It governs the commercial relationship between the mother company and its franchisees.</p></div>
+<blockquote class="pull">Oracle Fusion is the single source of truth. The portal presents; Oracle Fusion decides.</blockquote>
+<p class="note">The portal does not hold a parallel ledger. It does not calculate balances. It does not create financial transactions. Every figure a franchisee sees is retrieved from Oracle Fusion, which means the number on the portal screen and the number in the general ledger cannot disagree. This is a deliberate design decision, and it is the reason the solution is auditable.</p>
+</div>
+</section>
+
+<section class="arch" id="architecture">
+<div class="wrap">
+<div class="head"><span class="eyebrow">03 · Solution architecture</span><h2>Three systems. Non-overlapping responsibility.</h2><p>The solution integrates three systems, each governing a defined part of the flow — with data direction made explicit.</p></div>
+<div class="diagram">
+<div class="d-box"><span class="tag">Transaction edge</span><h4>Point of Sale</h4><ul><li>Daily retail sales to end consumers</li><li>Item &amp; discount handling, receipts</li><li>Reference: Manarate POS</li></ul></div>
+<div class="d-arrows">
+<div class="arrow-lbl"><svg viewBox="0 0 100 14" preserveAspectRatio="none"><line x1="2" y1="7" x2="92" y2="7" stroke="#3ad0f2" stroke-width="1.5"/><polygon points="92,2 100,7 92,12" fill="#3ad0f2"/></svg><span>Sales sync to Fusion</span></div>
+<div class="arrow-lbl"><svg viewBox="0 0 100 14" preserveAspectRatio="none"><line x1="98" y1="7" x2="8" y2="7" stroke="#3ad0f2" stroke-width="1.5"/><polygon points="8,2 0,7 8,12" fill="#3ad0f2"/></svg><span>Master data distributed</span></div>
+</div>
+<div class="d-box center"><span class="tag">System of record</span><h4>Oracle Fusion Cloud</h4><ul><li>Customer &amp; item master, price lists</li><li>Order Management &amp; Inventory</li><li>Invoicing &amp; Oracle Receivables</li><li>Balances &amp; credit limits</li></ul></div>
+<div class="d-arrows">
+<div class="arrow-lbl"><svg viewBox="0 0 100 14" preserveAspectRatio="none"><line x1="2" y1="7" x2="92" y2="7" stroke="#3ad0f2" stroke-width="1.5"/><polygon points="92,2 100,7 92,12" fill="#3ad0f2"/></svg><span>Retrieved &amp; displayed</span></div>
+<div class="arrow-lbl"><svg viewBox="0 0 100 14" preserveAspectRatio="none"><line x1="98" y1="7" x2="8" y2="7" stroke="#3ad0f2" stroke-width="1.5"/><polygon points="8,2 0,7 8,12" fill="#3ad0f2"/></svg><span>Onboarding submissions</span></div>
+</div>
+<div class="d-box"><span class="tag">Governance &amp; visibility</span><h4>Franchise Portal</h4><ul><li>Onboarding &amp; approval workflow</li><li>Franchisee self-service dashboard</li><li>Executes no financial transactions</li></ul></div>
+</div>
+<p class="arch-ref">Reference implementation delivered and proven against Manarate POS.</p>
+<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Whether SC will commit publicly to POS-agnostic delivery, or restrict the claim to Manarate and named alternatives.</span></div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">04 · Functional capability</span><h2>What each side of the network can see and do.</h2></div>
+
+<div class="cap-block">
+<h3>Franchisee dashboard</h3>
+<p class="sub">Every franchisee receives a secure account scoped strictly to its own data.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Capability</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Balance</td><td>Current account position, retrieved live from Oracle Receivables</td></tr>
+<tr><td>Credit limit</td><td>Assigned limit and remaining headroom against it</td></tr>
+<tr><td>Invoices</td><td>Full invoice history with status and detail drill-down</td></tr>
+<tr><td>Receipts</td><td>Payment receipts, matched by Oracle Fusion against open invoices</td></tr>
+<tr><td>Contract details</td><td>Franchise agreement terms, dates, and commercial conditions</td></tr>
+<tr><td>Order status</td><td>Live progress of orders through the Oracle Fusion order cycle</td></tr>
+<tr><td>Notifications</td><td>Announcements, reminders, and alerts issued by the franchisor</td></tr>
+<tr><td>Document upload</td><td>Submission of supporting documentation into the franchisor's review queue</td></tr>
+</tbody>
+</table></div>
+<div class="access-note">Access model: view and submit only. No franchisee can initiate, alter, or reverse a financial transaction through the portal. This is enforced architecturally, not by configuration — the portal has no transactional write path into the financial sub-ledgers.</div>
+</div>
+
+<div class="cap-block">
+<h3>Franchisor administration dashboard</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Capability</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td>Application approval</td><td>Review and approve franchise applications through a structured workflow</td></tr>
+<tr><td>Document review</td><td>Inspect and validate submitted documentation before approval</td></tr>
+<tr><td>Account monitoring</td><td>Oversight of every franchise account across the network</td></tr>
+<tr><td>Financial oversight</td><td>Consolidated view of balances, invoices, receipts, and orders</td></tr>
+<tr><td>Notification broadcast</td><td>Issue announcements and alerts to individual franchisees or the network</td></tr>
+<tr><td>Customer reporting</td><td>Download customer information reports from three independent sources — the Portal, Oracle CX, and Oracle ERP — in a consistent structure, enabling direct cross-system reconciliation</td></tr>
+</tbody>
+</table></div>
+<div class="callout"><span class="eyebrow">Differentiator</span><p>The same report structure pulled from Portal, CX, and ERP — compared directly against each other. Most franchise platforms offer no equivalent cross-system data-integrity control.</p></div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">05 · Franchise onboarding workflow</span><h2>A governed state transition — prospect to trading customer.</h2><p>No franchisee reaches trading status without passing every gate.</p></div>
+<div class="workflow-steps">
+<div class="wstep"><div class="n">01</div><div><div class="sys">Oracle CX</div><h4>Prospect creation</h4><p>New franchise applicant registered as a Prospect.</p><div class="out">→ Prospect record</div></div></div>
+<div class="wstep"><div class="n">02</div><div><div class="sys">Oracle CX</div><h4>Information capture</h4><p>Customer information and required documentation collected.</p><div class="out">→ Complete application file</div></div></div>
+<div class="wstep"><div class="n">03</div><div><div class="sys">Franchise Portal</div><h4>Submission</h4><p>Application submitted into the approval workflow.</p><div class="out">→ Application in review queue</div></div></div>
+<div class="wstep"><div class="n">04</div><div><div class="sys">Franchise Portal</div><h4>Review</h4><p>Franchisor reviews application and supporting documents.</p><div class="out">→ Approval decision with audit trail</div></div></div>
+<div class="wstep"><div class="n">05</div><div><div class="sys">Franchise Portal</div><h4>Final approval</h4><p>Mother company grants final approval.</p><div class="out">→ Approved application</div></div></div>
+<div class="wstep"><div class="n">06</div><div><div class="sys">Oracle Fusion ERP</div><h4>Customer creation</h4><p>Franchisee created as a Customer — Prospect converts to Customer.</p><div class="out">→ Active Fusion customer record</div></div></div>
+<div class="wstep"><div class="n">07</div><div><div class="sys">Fusion → POS</div><h4>Master data sync</h4><p>Customer, items, and price lists distributed to the point-of-sale layer.</p><div class="out">→ Trading-ready branch</div></div></div>
+</div>
+<div class="why-box"><p>Why this sequence matters: the franchisee does not exist as a transactable entity in Oracle Fusion until the approval workflow completes. Approval is not a status flag applied after the fact — it is the event that creates the customer. The control cannot be bypassed.</p></div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">06 · Master data synchronisation</span><h2>Fusion originates. The point of sale consumes.</h2><p>Following customer creation in Oracle Fusion, the master data set is synchronised to the point-of-sale layer: customer information, item master, and price lists. Oracle Fusion remains the origin and authority for all master data across the solution.</p></div>
+<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Synchronisation mode (real-time event-driven, scheduled batch, or hybrid), frequency, and failure-handling behaviour.</span></div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">07 · Ordering and fulfilment</span><h2>One enforced channel.</h2><p>Franchisees purchase from the mother company through a single enforced channel. Independent purchasing outside the defined process is not available to them.</p></div>
+<div class="oflow">
+<div class="ostep"><div class="n">01</div><p>Order initiated at the point of sale</p></div>
+<div class="ostep"><div class="n">02</div><p>Order transmitted to Oracle Fusion for processing</p></div>
+<div class="ostep"><div class="n">03</div><p>Oracle Fusion validates product availability against Inventory</p></div>
+<div class="ostep"><div class="n">04</div><p>Sales Order created in Oracle Fusion Order Management</p></div>
+<div class="ostep"><div class="n">05</div><p>Full order management cycle executes inside Oracle Fusion</p></div>
+<div class="ostep"><div class="n">06</div><p>Invoice generated</p></div>
+<div class="ostep"><div class="n">07</div><p>Order status surfaced to the franchisee through the portal</p></div>
+</div>
+<div class="why-box"><p>The control point: because ordering is channelled through Oracle Fusion, availability, pricing, credit, and commercial terms are validated by the ERP on every order. The franchisor does not rely on franchisee compliance — the system enforces it.</p></div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">08 · Financial processing</span><h2>Every transaction, inside Oracle Fusion.</h2><p>Invoice generation, receipt management, Oracle Receivables processing, balance tracking, and both financial and inventory accounting impact — all occur within Oracle Fusion. Oracle Fusion automatically matches invoices to receipts to maintain accurate franchisee balances.</p></div>
+<div class="why-box"><p>Design consequence: there is no reconciliation exercise between the portal and the ERP, because there is nothing to reconcile. The portal holds no financial state of its own.</p></div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">09 · User access and security</span><h2>Access scoped by design, not by configuration.</h2></div>
+<div class="cap-block">
+<h3>Franchisee access</h3>
+<p>Each franchise is provisioned with a portal account granting access only to its own balances, invoices, receipts, orders, contracts, and notifications. Data isolation between franchisees is enforced at the access layer.</p>
+<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">The source document specifies a single user account per franchise. Copy must not imply multi-user, role-differentiated franchisee access unless the platform supports it — treat as a roadmap item if it is a current constraint.</span></div>
+</div>
+<div class="cap-block">
+<h3>Franchisor access</h3>
+<p>Oracle Fusion is accessed directly by authorised mother-company users — typically Finance, Procurement, and IT / System Administration. The IT / System Administrator manages user access and system administration across the platform.</p>
+<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Authentication method — local credentials, SSO/SAML, Oracle IDCS federation, MFA availability.</span></div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">10 · Business value</span><h2>Outcomes, not features.</h2></div>
+<div class="value-list">
+<div class="value-row"><div class="outcome">Governed network growth</div><p>Structured onboarding with documented approval at every gate — scale the network without scaling risk.</p></div>
+<div class="value-row"><div class="outcome">Finance team released</div><p>Franchisee self-service removes routine balance, invoice, and receipt enquiries from finance.</p></div>
+<div class="value-row"><div class="outcome">Channel discipline enforced</div><p>System-enforced ordering closes off-channel purchasing structurally.</p></div>
+<div class="value-row"><div class="outcome">One version of the truth</div><p>Portal, POS, and ERP resolve to the same Oracle Fusion data — no reconciliation exercise.</p></div>
+<div class="value-row"><div class="outcome">Real-time credit control</div><p>Balance and credit-limit exposure visible to both sides, continuously.</p></div>
+<div class="value-row"><div class="outcome">Audit-ready by construction</div><p>Onboarding approvals, document submissions, and transactions carry an evidenced trail.</p></div>
+<div class="value-row"><div class="outcome">Faster franchisee activation</div><p>Onboarding-to-trading compressed from an email-and-spreadsheet cycle to a governed workflow.</p></div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">11 · Scope boundaries</span><h2>What the Franchise Portal does not do.</h2><p>A trust signal, not a disclaimer — so nothing is inferred from silence.</p></div>
+<div class="scope-list">
+<div class="scope-item"><div class="mark">—</div><p>The portal does not create, process, or reverse financial transactions</p></div>
+<div class="scope-item"><div class="mark">—</div><p>The portal does not maintain an independent ledger or balance calculation</p></div>
+<div class="scope-item"><div class="mark">—</div><p>The portal does not replace Oracle Fusion for franchisor finance users</p></div>
+<div class="scope-item"><div class="mark">—</div><p>The portal does not replace the point-of-sale system for retail transactions</p></div>
+<div class="scope-item"><div class="mark">—</div><p>The portal does not act as a master data authority — Oracle Fusion holds that role exclusively</p></div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">12 · Technical requirements</span><h2>What has to be in place.</h2></div>
+<div class="table-wrap"><table>
+<thead><tr><th>Requirement</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>Oracle Fusion Cloud</td><td>Active subscription with Order Management, Inventory, Receivables, and customer master<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Minimum module set and any release-level dependency.</span></div></td></tr>
+<tr><td>Oracle CX</td><td>Required for the prospect-stage onboarding flow<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Whether CX is mandatory, or the flow can originate in the portal for clients without CX.</span></div></td></tr>
+<tr><td>Point of sale</td><td>Manarate POS or equivalent with a supported integration interface</td></tr>
+<tr><td>Integration layer</td><td><div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Architecture — Oracle Integration Cloud, SC-built integration services on OCI, or direct Fusion REST/SOAP consumption.</span></div></td></tr>
+<tr><td>Hosting</td><td><div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">SC-hosted on OCI, client-hosted, or either.</span></div></td></tr>
+<tr><td>Browser support</td><td><div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Supported browser matrix.</span></div></td></tr>
+<tr><td>Languages</td><td><div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Arabic / English bilingual and RTL support.</span></div></td></tr>
+</tbody>
+</table></div>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+<div class="head"><span class="eyebrow">13 · FAQ</span><h2>Questions evaluators ask first.</h2></div>
+<div class="faq">
+<div class="faq-item"><button class="faq-q"><span>Does the Franchise Portal require an Oracle Fusion licence for every franchisee?</span><span class="plus">+</span></button><div class="faq-a"><div class="faq-a-inner">No. The portal is the reason it doesn't. Franchisees access their information through the portal without holding Oracle Fusion user licences, while all data remains governed inside Fusion.</div></div></div>
+<div class="faq-item"><button class="faq-q"><span>Can a franchisee change financial data through the portal?</span><span class="plus">+</span></button><div class="faq-a"><div class="faq-a-inner">No. The portal has no transactional write path into the financial sub-ledgers. Franchisees view information and submit documents; Oracle Fusion executes every transaction.</div></div></div>
+<div class="faq-item"><button class="faq-q"><span>How does the portal stay synchronised with Oracle Fusion?</span><span class="plus">+</span></button><div class="faq-a"><div class="faq-a-inner">The portal retrieves data from Oracle Fusion rather than maintaining its own copy of financial state.<div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Specific mechanism and latency.</span></div></div></div></div>
+<div class="faq-item"><button class="faq-q"><span>Can it integrate with a point-of-sale system other than Manarate?</span><span class="plus">+</span></button><div class="faq-a"><div class="faq-a-inner"><div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Answer depends on the POS-agnostic delivery decision.</span></div></div></div></div>
+<div class="faq-item"><button class="faq-q"><span>How long does implementation take?</span><span class="plus">+</span></button><div class="faq-a"><div class="faq-a-inner"><div class="pending"><span class="lbl">Pending confirmation</span><span class="txt">Realistic range, with the assumptions that drive it.</span></div></div></div></div>
+</div>
+</div>
+</section>
+
+<section class="closing" id="contact">
+<div class="wrap">
+<h2>Govern your franchise network from Oracle Fusion.</h2>
+<p>One walkthrough — the architecture, the onboarding workflow, and what the portal deliberately does not do.</p>
+<div class="cta-row"><a class="btn btn-primary" href="mailto:hello@softwareconsultancy.com">Request a Franchise Portal walkthrough</a><a class="btn btn-ghost" href="#architecture">Review the architecture again</a></div>
+</div>
+</section>
+
+<footer><div class="wrap"><span>Software Consultancy — Oracle Cloud Excellence Implementer</span><span>Jordan · Saudi Arabia · GCC</span></div></footer>
+
+<script>
+document.querySelectorAll('.faq-item').forEach(item=>{
+  const q=item.querySelector('.faq-q'), a=item.querySelector('.faq-a');
+  q.addEventListener('click',()=>{
+    const open=item.getAttribute('data-open')==='true';
+    document.querySelectorAll('.faq-item').forEach(i=>{i.setAttribute('data-open','false');i.querySelector('.faq-a').style.maxHeight=null});
+    if(!open){item.setAttribute('data-open','true');a.style.maxHeight=a.scrollHeight+'px'}
+  });
+});
+</script>
+</body>
+</html>

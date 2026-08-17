@@ -1,0 +1,3946 @@
+
+/* ===== f864d48f-949e-460d-9c5d-61578a9296c6 (application/javascript) ===== */
+// SC — Animated background: flat canvas color + a live VANTA.NET mesh animation.
+// z-index 0 for all background layers, .sc-page sits at z-index 1 (see style.css) —
+// deliberately NOT negative z-index, which is fragile against ancestor backgrounds.
+
+function AnimatedBackground({ theme }) {
+  const netRef = React.useRef(null);
+  const vantaRef = React.useRef(null);
+  const isDark = theme !== 'light';
+
+  const DARK  = { color: 0x1f4f79 };
+  const LIGHT = { color: 0x1c456b };
+
+  React.useEffect(() => {
+    if (!window.VANTA || !window.THREE || !netRef.current) return;
+    vantaRef.current = window.VANTA.NET({
+      el: netRef.current,
+      THREE: window.THREE,
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200,
+      minWidth: 200,
+      scale: 1,
+      scaleMobile: 1,
+      points: 9,
+      maxDistance: 22,
+      spacing: 18,
+      showDots: true,
+      backgroundAlpha: 0,
+      backgroundColor: 0x000000,
+      ...(isDark ? DARK : LIGHT),
+    });
+    const v = vantaRef.current;
+    if (v && v.linesMesh) {
+      v.linesMesh.material.transparent = true;
+      v.linesMesh.material.opacity = 0.22;
+    }
+    if (v && v.points) {
+      v.points.forEach(p => {
+        p.material.transparent = true;
+        p.material.opacity = 0.22;
+      });
+    }
+    return () => { if (vantaRef.current) { vantaRef.current.destroy(); vantaRef.current = null; } };
+  }, []);
+
+  React.useEffect(() => {
+    if (vantaRef.current) vantaRef.current.setOptions(isDark ? DARK : LIGHT);
+  }, [isDark]);
+
+  return (
+    <React.Fragment>
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed', inset: 0, zIndex: 0,
+          backgroundColor: isDark ? '#131313' : '#f5f4f0',
+          transition: 'background-color 400ms ease',
+        }}
+      />
+
+      {/* Live mesh-line animation, transparent clear over the flat canvas color */}
+      <div ref={netRef} aria-hidden="true" style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }} />
+
+      {/* Tech grid overlay — fades out in light mode via CSS transition */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+          backgroundImage: [
+            'linear-gradient(rgba(255,255,255,0.024) 1px, transparent 1px)',
+            'linear-gradient(90deg, rgba(255,255,255,0.024) 1px, transparent 1px)',
+          ].join(','),
+          backgroundSize: '72px 72px',
+          opacity: isDark ? 1 : 0,
+          transition: 'opacity 400ms ease',
+        }}
+      />
+    </React.Fragment>
+  );
+}
+
+Object.assign(window, { AnimatedBackground });
+
+
+/* ===== 6b3d9efa-9b89-48f9-8a09-2e7337b7aace (application/javascript) ===== */
+// SC — Icons (Lucide-style, 2px stroke, square caps/joins)
+
+const Icon = ({ d, size = 24, color = "currentColor", stroke = 2, style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color}
+    strokeWidth={stroke}
+    strokeLinecap="square"
+    strokeLinejoin="miter"
+    style={style}
+    aria-hidden="true"
+  >
+    {d}
+  </svg>
+);
+
+const ArrowRight = (p) => <Icon {...p} d={<><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></>} />;
+const ArrowDown  = (p) => <Icon {...p} d={<><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></>} />;
+const ArrowUpRight = (p) => <Icon {...p} d={<><path d="M7 7h10v10"/><path d="M7 17 17 7"/></>} />;
+const Search    = (p) => <Icon {...p} d={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>} />;
+const Menu      = (p) => <Icon {...p} d={<><line x1="4" x2="20" y1="6"  y2="6" /><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></>} />;
+const Plus      = (p) => <Icon {...p} d={<><path d="M5 12h14"/><path d="M12 5v14"/></>} />;
+const X         = (p) => <Icon {...p} d={<><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>} />;
+const Check     = (p) => <Icon {...p} d={<path d="M20 6 9 17l-5-5"/>} />;
+const Shield    = (p) => <Icon {...p} d={<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>} />;
+const Box       = (p) => <Icon {...p} d={<><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></>} />;
+const Database  = (p) => <Icon {...p} d={<><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></>} />;
+const Cog       = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></>} />;
+const Layers    = (p) => <Icon {...p} d={<><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></>} />;
+const Activity  = (p) => <Icon {...p} d={<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>} />;
+const GitCommit = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="4"/><line x1="1.05" x2="7" y1="12" y2="12"/><line x1="17.01" x2="22" y1="12" y2="12"/></>} />;
+const Users     = (p) => <Icon {...p} d={<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>} />;
+const MapPin    = (p) => <Icon {...p} d={<><path d="M20 10c0 7-8 12-8 12s-8-5-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></>} />;
+const Mail      = (p) => <Icon {...p} d={<><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-10 5L2 7"/></>} />;
+const Phone     = (p) => <Icon {...p} d={<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/>} />;
+const Briefcase = (p) => <Icon {...p} d={<><rect width="20" height="14" x="2" y="7" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>} />;
+const Award     = (p) => <Icon {...p} d={<><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></>} />;
+const FileText  = (p) => <Icon {...p} d={<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></>} />;
+const Zap       = (p) => <Icon {...p} d={<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>} />;
+const Terminal  = (p) => <Icon {...p} d={<><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></>} />;
+const BarChart  = (p) => <Icon {...p} d={<><line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6"  x2="6"  y1="20" y2="16"/></>} />;
+const Link2     = (p) => <Icon {...p} d={<><path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/></>} />;
+
+Object.assign(window, {
+  Icon, ArrowRight, ArrowDown, ArrowUpRight, Search, Menu, Plus, X, Check,
+  Shield, Box, Database, Cog, Layers, Activity, GitCommit, Users, MapPin,
+  Mail, Phone, Briefcase, Award, FileText, Zap, Terminal, BarChart, Link2,
+});
+
+
+/* ===== 02a76da1-8460-4a38-9ded-41f7fd0ccf94 (application/javascript) ===== */
+// SC — Shared layout primitives: Hero, FeatureTile, ImagePlaceholder, Stats,
+// Kicker, Section header, etc. All inherit Voltline tokens.
+
+// ── Hero ─────────────────────────────────────────────────────
+function Hero({ kicker, headline, deck, layout = 'left', accent, children }) {
+  const isSplit = layout === 'split';
+  return (
+    <section style={{
+      padding: isSplit ? '40px 0 32px' : '64px 0 40px',
+      display: 'grid',
+      gridTemplateColumns: isSplit ? 'minmax(0, 1.1fr) minmax(0, 1fr)' : '1fr',
+      gap: 32,
+      alignItems: 'center'
+    }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 52 }}>
+        {kicker && <Kicker>{kicker}</Kicker>}
+        <h1 className="sc-hero-h1" style={{
+          fontFamily: 'var(--font-display)',
+          fontWeight: 900,
+          fontSize: isSplit ? 'clamp(56px, 7vw, 92px)' : 'clamp(60px, 8.5vw, 116px)',
+          letterSpacing: '0.6px',
+          color: '#fff',
+          margin: 0,
+          maxWidth: isSplit ? '14ch' : '18ch'
+        }}>
+          {headline}
+          {accent && <span style={{ color: 'var(--sc-red)' }}>{accent}</span>}
+        </h1>
+        {deck &&
+        <p style={{
+          fontFamily: 'var(--font-serif)',
+          fontStyle: 'italic',
+          fontSize: 22,
+          lineHeight: 1.3,
+          letterSpacing: '-0.16px',
+          color: '#e9e9e9',
+          margin: 0,
+          maxWidth: 640
+        }}>{deck}</p>
+        }
+        {children && <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 8 }}>{children}</div>}
+      </div>
+      {isSplit &&
+      <ImagePlaceholder
+        label="Hero image · 4:3"
+        aspect="4 / 3"
+        caption="Team @ delivery review" />
+
+      }
+    </section>);
+
+}
+
+// ── Section header ───────────────────────────────────────────
+function SectionHead({ kicker, title, deck, align = 'left', actions }) {
+  return (
+    <header style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 16,
+      textAlign: align,
+      alignItems: align === 'center' ? 'center' : 'flex-start',
+      maxWidth: 880,
+      margin: align === 'center' ? '0 auto' : 0
+    }}>
+      {kicker && <Kicker>{kicker}</Kicker>}
+      <h2 style={{
+        fontFamily: 'var(--font-display)',
+        fontWeight: 900,
+        fontSize: 'clamp(38px, 5vw, 64px)',
+        lineHeight: 0.95,
+        letterSpacing: '0.4px',
+        color: '#fff',
+        margin: 0
+      }}>{title}</h2>
+      {deck && <p style={{
+        fontFamily: 'var(--font-sans)',
+        fontWeight: 400,
+        fontSize: 18,
+        lineHeight: 1.5,
+        color: '#e9e9e9',
+        margin: 0,
+        maxWidth: 720
+      }}>{deck}</p>}
+      {actions && <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 6 }}>{actions}</div>}
+    </header>);
+
+}
+
+// ── Kicker eyebrow ───────────────────────────────────────────
+function Kicker({ children, color = 'white' }) {
+  const tone = color === 'red' ? 'var(--sc-red)' : '#fff';
+  return (
+    <div style={{
+      fontFamily: 'var(--font-mono)',
+      fontWeight: 700,
+      fontSize: 12,
+      lineHeight: 1.4,
+      letterSpacing: '1.9px',
+      textTransform: 'uppercase',
+      color: tone,
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 10
+    }}>
+      <span style={{
+        width: 22, height: 1, background: tone === '#fff' ? 'var(--sc-red)' : tone
+      }} />
+      {children}
+    </div>);
+
+}
+
+// ── FeatureTile (color-block) ────────────────────────────────
+function FeatureTile({ variant = 'red', kicker, headline, deck, cta, onCtaClick, children, padded = true }) {
+  const tilePalette = {
+    red: { bg: 'var(--sc-red)', fg: '#fff' },
+    redDeep: { bg: 'var(--sc-red-deep)', fg: '#fff' },
+    redBright: { bg: 'var(--sc-red-bright)', fg: '#fff' },
+    slate: { bg: 'var(--sc-steel-800)', fg: '#fff' },
+    steel: { bg: 'var(--sc-steel-500)', fg: '#fff' },
+    white: { bg: '#fff', fg: '#131313' },
+    light: { bg: 'var(--sc-steel-100)', fg: '#131313' }
+  };
+  const p = tilePalette[variant];
+  return (
+    <article style={{
+      background: p.bg,
+      color: p.fg,
+      borderRadius: 24,
+      padding: padded ? '44px 48px' : 0,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 18
+    }} data-comment-anchor="5494e53f33-article-127-5">
+      {kicker && <div style={{
+        fontFamily: 'var(--font-mono)',
+        fontWeight: 700,
+        fontSize: 12,
+        letterSpacing: '1.9px',
+        textTransform: 'uppercase',
+        color: p.fg,
+        opacity: 0.8
+      }}>{kicker}</div>}
+      {headline && <h2 style={{
+        fontFamily: 'var(--font-display)',
+        fontWeight: 900,
+        fontSize: 'clamp(44px, 5.5vw, 76px)',
+        lineHeight: 'var(--display-leading)',
+        letterSpacing: '0.4px',
+        color: p.fg,
+        margin: 0
+      }}>{headline}</h2>}
+      {deck && <p style={{
+        fontFamily: 'var(--font-sans)',
+        fontWeight: 500,
+        fontSize: 17,
+        lineHeight: 1.55,
+        color: p.fg,
+        opacity: 0.88,
+        margin: 0,
+        maxWidth: 660
+      }} data-comment-anchor="d44451de58-p-154-16">{deck}</p>}
+      {children}
+      {cta &&
+      <div style={{ marginTop: 6 }}>
+          <button
+          onClick={onCtaClick}
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 700,
+            fontSize: 12,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            padding: '12px 22px',
+            borderRadius: 40,
+            background: 'transparent',
+            color: p.fg,
+            border: `1px solid ${p.fg}`,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            transition: 'background 150ms ease, color 150ms ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = p.fg;
+            e.currentTarget.style.color = p.bg;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.color = p.fg;
+          }}>
+          
+            {cta} <ArrowRight size={16} stroke={2} />
+          </button>
+        </div>
+      }
+    </article>);
+
+}
+
+// ── Image placeholder (labeled, with caption) ────────────────
+function ImagePlaceholder({ label = 'Image', aspect = '16 / 9', caption, height, style }) {
+  return (
+    <figure style={{ margin: 0, display: 'flex', flexDirection: 'column', gap: 8, ...style }}>
+      <div className="sc-frame" style={{ aspectRatio: aspect, height }}>
+        <div className="sc-frame__label">{label}</div>
+        <div className="sc-frame__placeholder">
+          <span>Image · {aspect.replace(' / ', ':')}</span>
+        </div>
+      </div>
+      {caption && <figcaption style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 11,
+        letterSpacing: '1.1px', textTransform: 'uppercase', color: '#949494'
+      }}>{caption}</figcaption>}
+    </figure>);
+
+}
+
+// ── Quiet card ───────────────────────────────────────────────
+function QuietCard({ children, style, hover = false, onClick }) {
+  const [h, setH] = React.useState(false);
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={() => hover && setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        background: h ? 'var(--sc-glass-hover)' : 'var(--sc-glass-bg)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        color: 'var(--text-primary)',
+        borderRadius: 16,
+        border: h ? '1px solid rgba(31,79,121,0.28)' : '1px solid var(--sc-glass-border)',
+        padding: '28px 28px',
+        cursor: onClick ? 'pointer' : 'default',
+        transition: 'background 180ms ease, border-color 180ms ease',
+        ...style
+      }}>
+      {children}</div>);
+}
+
+// ── Slate card ───────────────────────────────────────────────
+function SlateCard({ children, style }) {
+  return (
+    <div style={{
+      background: 'var(--sc-glass-bg-2)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid var(--sc-glass-border)',
+      color: 'var(--text-primary)',
+      borderRadius: 16,
+      padding: '24px 28px',
+      ...style
+    }}>{children}</div>);
+}
+
+// ── Stat block ───────────────────────────────────────────────
+function StatBlock({ value, label, kicker, big, accent }) {
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      padding: '4px 0'
+    }}>
+      {kicker && <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+        letterSpacing: '1.5px', textTransform: 'uppercase',
+        color: accent ? 'var(--sc-red)' : '#949494'
+      }}>{kicker}</div>}
+      <div className="sc-tnum" style={{
+        fontFamily: 'var(--font-display)',
+        fontWeight: 900,
+        fontSize: big ? 'clamp(64px, 8vw, 108px)' : 'clamp(40px, 5vw, 64px)',
+        lineHeight: 0.9,
+        color: accent ? 'var(--sc-red)' : '#fff'
+      }}>{value}</div>
+      {label && <div style={{
+        fontFamily: 'var(--font-sans)',
+        fontWeight: 400,
+        fontSize: 14,
+        lineHeight: 1.4,
+        color: '#e9e9e9',
+        maxWidth: 280
+      }}>{label}</div>}
+    </div>);
+
+}
+
+// ── Stream/feed item (timestamped row) ───────────────────────
+function StreamItem({ timestamp, tag, tagColor = 'red', kicker, headline, deck, variant = 'quiet', onOpen, image }) {
+  const isAccent = !['quiet', 'slate'].includes(variant);
+  const palette = {
+    red: 'var(--sc-red)',
+    redDark: 'var(--sc-red-deep)',
+    steel: 'var(--sc-steel-700)'
+  };
+  const bg = variant === 'quiet'
+    ? 'rgba(255,255,255,0.03)'
+    : variant === 'slate'
+      ? 'rgba(255,255,255,0.06)'
+      : palette[variant] || palette.red;
+  const fg = '#fff';
+  const border = variant === 'quiet' ? '1px solid rgba(255,255,255,0.07)' : 'none';
+  const metaColor = variant === 'slate' ? '#949494' : 'rgba(255,255,255,0.7)';
+  const [hover, setHover] = React.useState(false);
+
+  return (
+    <li style={{
+      position: 'relative',
+      listStyle: 'none',
+      paddingLeft: 96,
+      marginBottom: 14
+    }}>
+      <div style={{
+        position: 'absolute',
+        left: 16,
+        top: 22,
+        width: 72,
+        fontFamily: 'var(--font-mono)',
+        fontWeight: 500,
+        fontSize: 11,
+        letterSpacing: '1.1px',
+        color: '#949494',
+        textTransform: 'uppercase',
+        lineHeight: 1.2
+      }}>{timestamp}</div>
+
+      <article
+        onClick={onOpen}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        style={{
+          background: bg,
+          color: fg,
+          borderRadius: 20,
+          border: border,
+        backdropFilter: ['quiet','slate'].includes(variant) ? 'blur(16px)' : 'none',
+        WebkitBackdropFilter: ['quiet','slate'].includes(variant) ? 'blur(16px)' : 'none',
+          padding: '22px 26px',
+          cursor: onOpen ? 'pointer' : 'default',
+          transition: 'color 150ms ease',
+          display: image ? 'grid' : 'block',
+          gridTemplateColumns: image ? '1fr minmax(180px, 240px)' : '1fr',
+          gap: 24,
+          alignItems: 'center'
+        }}>
+        
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, flexWrap: 'wrap' }}>
+            {tag && <PillTag color={tagColor}>{tag}</PillTag>}
+            {kicker && <span style={{
+              fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 10,
+              letterSpacing: '1.5px', textTransform: 'uppercase', color: metaColor
+            }}>{kicker}</span>}
+          </div>
+          <h3 style={{
+            fontFamily: 'var(--font-sans)',
+            fontWeight: 700,
+            fontSize: isAccent ? 26 : 24,
+            lineHeight: 1.1,
+            color: hover && !isAccent ? 'var(--sc-red-bright)' : fg,
+            margin: 0,
+            transition: 'color 150ms ease'
+          }}>{headline}</h3>
+          {deck &&
+          <p style={{
+            fontFamily: 'var(--font-sans)', fontWeight: 400, fontSize: 14,
+            lineHeight: 1.55, color: metaColor, margin: '10px 0 0', maxWidth: 580
+          }}>{deck}</p>
+          }
+        </div>
+        {image && <ImagePlaceholder aspect="4 / 3" label={image} />}
+      </article>
+    </li>);
+
+}
+
+// ── Rail wrapper (the dashed vertical rail) ──────────────────
+function StreamRail({ children }) {
+  return (
+    <ul style={{
+      listStyle: 'none', padding: 0, margin: 0,
+      position: 'relative',
+      borderLeft: '1px dashed var(--sc-steel-700)',
+      marginLeft: 80,
+      paddingLeft: 0
+    }}>{children}</ul>);
+
+}
+
+// ── Marquee strip (used for partner logo or proof bar) ───────
+function ProofStrip({ items }) {
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: `repeat(${items.length}, 1fr)`,
+      borderTop: '1px solid var(--sc-steel-700)',
+      borderBottom: '1px solid var(--sc-steel-700)',
+      padding: '20px 0',
+      alignItems: 'center'
+    }}>
+      {items.map((it, i) =>
+      <div key={i} style={{
+        textAlign: 'center',
+        fontFamily: 'var(--font-mono)',
+        fontWeight: 700,
+        fontSize: 13,
+        letterSpacing: '1.8px',
+        textTransform: 'uppercase',
+        color: i === 0 ? 'var(--sc-red)' : '#fff',
+        borderRight: i < items.length - 1 ? '1px solid var(--sc-steel-700)' : 'none',
+        padding: '0 12px'
+      }}>{it}</div>
+      )}
+    </div>);
+
+}
+
+Object.assign(window, {
+  Hero, SectionHead, Kicker, FeatureTile, ImagePlaceholder, QuietCard, SlateCard,
+  StatBlock, StreamItem, StreamRail, ProofStrip
+});
+
+/* ===== 6d4bb654-1cea-460d-8ddd-c856d8842cb6 (application/javascript) ===== */
+// SC — Client logo marquee. Seamless infinite auto-scroll, pause on hover,
+// edge-fade masks, monochrome → color reveal on hover. Works in both themes.
+//
+// To use REAL client logos: replace each item's `mark`/`wordmark` placeholder
+// with <img src="assets/clients/acme.svg" alt="Acme" style={{height: 28}} />,
+// or drop the whole CLIENTS array and map over your own logo files.
+
+const CLIENTS = [
+  { name: 'Najd Holding',     sub: 'Retail Group',     glyph: 'diamond' },
+  { name: 'Levant Foods',     sub: 'F&B Franchise',    glyph: 'arc'     },
+  { name: 'Marsa Logistics',  sub: 'SCM',              glyph: 'wave'    },
+  { name: 'Qasr Industries',  sub: 'Manufacturing',    glyph: 'grid'    },
+  { name: 'Bayan Telecom',    sub: 'Telco',            glyph: 'orbit'   },
+  { name: 'Atlas Real Estate',sub: 'Property',         glyph: 'tower'   },
+  { name: 'Sahara Energy',    sub: 'Utilities',        glyph: 'bolt'    },
+  { name: 'Cedar Health',     sub: 'Healthcare',       glyph: 'cross'   },
+  { name: 'Rua Education',    sub: 'Public Sector',    glyph: 'arrow'   },
+];
+
+// A small abstract logo glyph — stands in for a real client mark.
+function ClientGlyph({ type, size = 26 }) {
+  const s = { width: size, height: size, display: 'block', flexShrink: 0 };
+  const stroke = { stroke: 'currentColor', strokeWidth: 2, fill: 'none', strokeLinecap: 'square' };
+  switch (type) {
+    case 'diamond':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M12 2 22 12 12 22 2 12Z" {...stroke}/><path d="M12 7 17 12 12 17 7 12Z" fill="currentColor" stroke="none"/></svg>;
+    case 'arc':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M3 20a9 9 0 0 1 18 0" {...stroke}/><circle cx="12" cy="20" r="2.4" fill="currentColor" stroke="none"/></svg>;
+    case 'wave':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M2 14c3-6 5-6 8 0s5 6 8 0" {...stroke}/><path d="M2 19c3-6 5-6 8 0" {...stroke} opacity="0.5"/></svg>;
+    case 'grid':
+      return <svg viewBox="0 0 24 24" style={s}><rect x="3" y="3" width="7" height="7" fill="currentColor"/><rect x="14" y="3" width="7" height="7" {...stroke}/><rect x="3" y="14" width="7" height="7" {...stroke}/><rect x="14" y="14" width="7" height="7" fill="currentColor"/></svg>;
+    case 'orbit':
+      return <svg viewBox="0 0 24 24" style={s}><circle cx="12" cy="12" r="4" fill="currentColor"/><ellipse cx="12" cy="12" rx="10" ry="4.5" {...stroke}/></svg>;
+    case 'tower':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M6 21V8l6-5 6 5v13" {...stroke}/><path d="M10 21v-6h4v6" fill="currentColor" stroke="none"/></svg>;
+    case 'bolt':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M13 2 4 14h6l-1 8 9-12h-6Z" fill="currentColor" stroke="none"/></svg>;
+    case 'cross':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6Z" {...stroke}/></svg>;
+    case 'arrow':
+      return <svg viewBox="0 0 24 24" style={s}><path d="M3 12h14" {...stroke}/><path d="m12 5 7 7-7 7" {...stroke}/><circle cx="4" cy="12" r="2" fill="currentColor" stroke="none"/></svg>;
+    default:
+      return <svg viewBox="0 0 24 24" style={s}><circle cx="12" cy="12" r="9" {...stroke}/></svg>;
+  }
+}
+
+function ClientLogo({ client }) {
+  return (
+    <div className="sc-logo-cell" title={client.name}>
+      <ClientGlyph type={client.glyph} />
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1, gap: 4 }}>
+        <span style={{
+          fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 17,
+          letterSpacing: '-0.2px', whiteSpace: 'nowrap',
+        }}>{client.name}</span>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9,
+          letterSpacing: '1.6px', textTransform: 'uppercase', opacity: 0.55,
+          whiteSpace: 'nowrap',
+        }}>{client.sub}</span>
+      </div>
+    </div>
+  );
+}
+
+// `speed` = seconds per full loop. `reverse` flips direction.
+function LogoMarquee({ kicker = 'Trusted on Oracle Fusion rollouts', heading, speed = 42 }) {
+  // Duplicate the set so the -50% translate creates a seamless loop.
+  const track = [...CLIENTS, ...CLIENTS];
+  return (
+    <section className="sc-marquee-wrap">
+      <div className="sc-marquee-head">
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12,
+          letterSpacing: '1.9px', textTransform: 'uppercase',
+          color: 'var(--sc-red)', display: 'inline-flex', alignItems: 'center', gap: 10,
+        }}>
+          <span style={{ width: 22, height: 1, background: 'var(--sc-red)' }} />
+          {kicker}
+        </div>
+        {heading && <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(28px, 3vw, 44px)', lineHeight: 1, letterSpacing: '0.3px',
+          margin: '16px 0 0',
+        }} className="sc-marquee-heading">{heading}</h3>}
+      </div>
+
+      <div className="sc-marquee" style={{ '--marquee-speed': `${speed}s` }}>
+        <div className="sc-marquee__track">
+          {track.map((c, i) => <ClientLogo key={i} client={c} />)}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { LogoMarquee, CLIENTS });
+
+
+/* ===== 6ddae912-ce17-43f5-94f9-d7dde92e989a (application/javascript) ===== */
+// SC — Careers page
+
+const OPEN_ROLES = [
+{ team: 'ERP', role: 'Senior ERP Implementation Consultant', location: 'Amman · Hybrid', type: 'Full-time', code: 'ERP-014' },
+{ team: 'ERP', role: 'Finance Functional Lead', location: 'Riyadh · On-site', type: 'Full-time', code: 'ERP-007' },
+{ team: 'ERP', role: 'PPM Consultant', location: 'Remote · EMEA', type: 'Full-time', code: 'ERP-021' },
+{ team: 'HCM', role: 'HCM Functional Consultant', location: 'Amman · Hybrid', type: 'Full-time', code: 'HCM-019' },
+{ team: 'HCM', role: 'Payroll Team Lead', location: 'Riyadh · On-site', type: 'Full-time', code: 'HCM-004' },
+{ team: 'HCM', role: 'Workforce Management Consultant', location: 'Cairo · Hybrid', type: 'Full-time', code: 'HCM-011' },
+{ team: 'Technical & CX', role: 'OIC Integration Consultant', location: 'Remote · EMEA', type: 'Full-time', code: 'TEC-031' },
+{ team: 'Technical & CX', role: 'OCI Cloud Architect', location: 'Amman · Hybrid', type: 'Full-time', code: 'TEC-008' },
+{ team: 'Technical & CX', role: 'CX Cloud Consultant', location: 'Dubai · On-site', type: 'Full-time', code: 'TEC-022' },
+{ team: 'Technical & CX', role: 'OTBI / BI Publisher Developer', location: 'Amman · Hybrid', type: 'Full-time', code: 'TEC-005' },
+{ team: 'Business Excellence', role: 'QA & Client Adoption Officer', location: 'Amman · On-site', type: 'Full-time', code: 'BIZ-002' },
+{ team: 'Business Excellence', role: 'Business Development Officer', location: 'Riyadh · Hybrid', type: 'Full-time', code: 'BIZ-006' }];
+
+
+const TEAM_BREAKDOWN = [
+{ team: 'ERP', count: 36, color: 'var(--sc-red)', desc: 'Finance, Procurement, PPM, Accounting Hub' },
+{ team: 'HCM', count: 35, color: 'var(--sc-red-deep)', desc: 'Core HR, Payroll, Talent, Workforce Mgmt' },
+{ team: 'Technical & CX', count: 42, color: 'var(--sc-red-bright)', desc: 'OIC, OCI, Reporting, CX Cloud' },
+{ team: 'Business Excellence', count: 26, color: 'var(--sc-steel-500)', desc: 'PMO, QA, Sales Support, HR, Adoption' }];
+
+
+function CareersPage({ setPage }) {
+  const [team, setTeam] = React.useState('All');
+  const teams = ['All', ...Array.from(new Set(OPEN_ROLES.map((r) => r.team)))];
+  const filtered = team === 'All' ? OPEN_ROLES : OPEN_ROLES.filter((r) => r.team === team);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <Hero
+        kicker="Careers · 39 open vacancies · April 2026"
+        headline="Consultants who'd rather "
+        accent="ship Fusion than slides."
+        deck="We're building a 150-person consulting practice. Right now we are 139, with 39 open roles weighted toward senior consultants in ERP, HCM, OIC and OCI.">
+        
+        <PrimaryButton onClick={() => setPage('contact')}>Apply with a CV <ArrowRight size={14} stroke={2} /></PrimaryButton>
+        <OutlinedButton color="white" onClick={() => document.getElementById('open-roles')?.scrollIntoView({ behavior: 'smooth' })}>Browse open roles</OutlinedButton>
+      </Hero>
+
+      {/* Headcount overview */}
+      <section style={{ display: 'grid', gridTemplateColumns: '1.1fr 1fr', gap: 16, alignItems: 'stretch' }}>
+        <article style={{
+          background: 'var(--sc-red)', color: '#fff', borderRadius: 24,
+          padding: '40px 44px',
+          display: 'flex', flexDirection: 'column', gap: 18, justifyContent: 'space-between'
+        }}>
+          <Kicker color="white">Strategic restructure · 2026 plan</Kicker>
+          <div data-comment-anchor="6ed9f09ae1-div-50-11">
+            <h3 style={{
+              fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontSize: 'clamp(48px, 6vw, 84px)', lineHeight: 0.95,
+              color: '#fff', margin: 0, maxWidth: '12ch'
+            }}>From 139 to 150 by end of 2026.</h3>
+            <p style={{
+              fontFamily: 'var(--font-sans)', fontSize: 16, lineHeight: 1.55,
+              color: '#fff', opacity: 0.92, margin: '20px 0 0', maxWidth: 560
+            }}>Our restructure adds a dedicated Business Excellence Division alongside Cloud Delivery, and weights hiring toward senior consultants and team leads who can move new arrivals up the curve.</p>
+          </div>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(3, auto)', gap: 32,
+            paddingTop: 24, borderTop: '1px solid rgba(255,255,255,0.25)'
+          }}>
+            <div>
+              <div className="sc-tnum" style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 56, lineHeight: 0.9, color: '#fff'
+              }}>139</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#fff', opacity: 0.8, marginTop: 6 }}>Today</div>
+            </div>
+            <div>
+              <div className="sc-tnum" style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 56, lineHeight: 0.9, color: '#fff'
+              }}>+39</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#fff', opacity: 0.8, marginTop: 6 }}>Open vacancies</div>
+            </div>
+            <div>
+              <div className="sc-tnum" style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 56, lineHeight: 0.9, color: '#fff'
+              }}>150</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.5px', textTransform: 'uppercase', color: '#fff', opacity: 0.8, marginTop: 6 }}>Target 2026</div>
+            </div>
+          </div>
+        </article>
+
+        <article style={{
+          background: 'rgba(255,255,255,0.04)',
+          backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 16, padding: '36px 40px',
+          display: 'flex', flexDirection: 'column', gap: 18
+        }}>
+          <Kicker color="red">Team composition</Kicker>
+          <h4 style={{
+            fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 22, lineHeight: 1.1,
+            color: '#fff', margin: 0, maxWidth: '24ch'
+          }}>Four practice areas. Senior-weighted bench.</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginTop: 6 }}>
+            {TEAM_BREAKDOWN.map((t) =>
+            <div key={t.team} style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <div style={{
+                  fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 14, color: '#fff'
+                }}>{t.team}</div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                    <span className="sc-tnum" style={{
+                    fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 13,
+                    color: t.color, letterSpacing: '1px'
+                  }}>{t.count}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.2px', color: '#5d5d5d', textTransform: 'uppercase' }}>consultants</span>
+                  </div>
+                </div>
+                <div style={{
+                height: 6, background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden'
+              }}>
+                  <div style={{
+                  width: `${t.count / 50 * 100}%`,
+                  height: '100%',
+                  background: t.color
+                }} />
+                </div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{t.desc}</div>
+              </div>
+            )}
+          </div>
+        </article>
+      </section>
+
+      {/* Why SC */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Why join SC"
+          title="A consulting bench that ships."
+          deck="Most of our team has been here three years or longer. The reason is short — we send people to client sites that are well-run, with a written plan, and we pay for the certifications that make their CV travel." />
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {[
+          { icon: Award, title: 'Certifications, paid', deck: 'Every consultant carries at least one Oracle Cloud certification. SC pays the exam, the prep time, and the renewal.' },
+          { icon: Briefcase, title: 'Real engagements', deck: 'No bench projects, no demo work. From week one you are working on a paying client engagement with a written delivery plan.' },
+          { icon: Users, title: 'Named mentors', deck: 'Each new hire is matched with a senior consultant from their practice area. Mentorship is a measured part of the senior\'s role.' },
+          { icon: Activity, title: 'Growth-track titles', deck: 'Consultant → Senior → Team Lead → Director. Promotion criteria are written, tracked, and reviewed twice a year.' },
+          { icon: GitCommit, title: 'Code-reviewed everything', deck: 'Configs, OIC flows, reports, even page personalisations. Every change is reviewed and version-controlled.' },
+          { icon: Zap, title: 'Modern delivery', deck: 'Two-week sprints with a working Friday demo. Git, Jira, OIC monitoring, written postmortems on every variance.' }].
+          map((b, i) =>
+          <QuietCard key={i}>
+              <b.icon size={26} stroke={2} color="var(--sc-red)" />
+              <h4 style={{
+              fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 18,
+              color: '#fff', margin: '14px 0 8px'
+            }}>{b.title}</h4>
+              <p style={{ fontSize: 14, lineHeight: 1.5, color: '#949494', margin: 0 }}>{b.deck}</p>
+            </QuietCard>
+          )}
+        </div>
+      </section>
+
+      {/* Open roles */}
+      <section id="open-roles" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <SectionHead
+          kicker="Open roles · 39 active"
+          title="Pick a team. Pick a level." />
+        
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+            letterSpacing: '1.8px', textTransform: 'uppercase', color: '#949494', marginRight: 4
+          }}>Filter</span>
+          {teams.map((t) =>
+          <button
+            key={t}
+            onClick={() => setTeam(t)}
+            style={{
+              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+              letterSpacing: '1.5px', textTransform: 'uppercase',
+              padding: '8px 14px', borderRadius: 999,
+              background: team === t ? 'var(--sc-red)' : 'transparent',
+              color: '#fff',
+              border: `1px solid ${team === t ? 'var(--sc-red)' : 'var(--sc-steel-700)'}`,
+              cursor: 'pointer',
+              transition: 'background 150ms ease, border-color 150ms ease'
+            }}>
+            {t} {team === t ? `· ${filtered.length}` : ''}</button>
+          )}
+        </div>
+
+        {/* Role list */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 1, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
+          {filtered.map((r, i) => <RoleRow key={r.code} role={r} index={i} setPage={setPage} />)}
+          {filtered.length === 0 &&
+          <div style={{ padding: '40px 28px', textAlign: 'center', color: '#949494' }}>No roles match this filter.</div>
+          }
+        </div>
+      </section>
+
+      <FeatureTile
+        variant="slate"
+        kicker="Don't see your role?"
+        headline="We always read a thoughtful CV."
+        deck="If you're senior in Fusion and you'd like to be on our bench, write us. We hire ahead of demand when the CV is right."
+        cta="Send a CV"
+        onCtaClick={() => setPage('contact')} />
+      
+    </div>);
+
+}
+
+function RoleRow({ role, index, setPage }) {
+  const [hover, setHover] = React.useState(false);
+  const teamColor = TEAM_BREAKDOWN.find((t) => t.team === role.team)?.color || 'var(--sc-red)';
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={() => setPage('contact')}
+      style={{
+        background: 'transparent',
+        padding: '20px 28px',
+        display: 'grid',
+        gridTemplateColumns: '70px 1.2fr 1fr 0.8fr auto',
+        gap: 24,
+        alignItems: 'center',
+        cursor: 'pointer',
+        transition: 'background 150ms ease'
+      }}>
+      
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+        letterSpacing: '1.5px', color: '#949494'
+      }}>{role.code}</div>
+      <div style={{
+        fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 17,
+        color: hover ? 'var(--sc-red-bright)' : '#fff',
+        transition: 'color 150ms ease'
+      }}>{role.role}</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <span style={{
+          width: 8, height: 8, borderRadius: '50%', background: teamColor
+        }} />
+        <span style={{
+          fontFamily: 'var(--font-sans)', fontSize: 14, color: '#e9e9e9'
+        }}>{role.team}</span>
+      </div>
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 11,
+        letterSpacing: '1.1px', textTransform: 'uppercase', color: '#949494'
+      }}>{role.location}</div>
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+        letterSpacing: '1.5px', textTransform: 'uppercase',
+        color: hover ? 'var(--sc-red-bright)' : '#fff',
+        display: 'inline-flex', alignItems: 'center', gap: 6,
+        transition: 'color 150ms ease'
+      }}>Apply <ArrowUpRight size={14} stroke={2} /></div>
+    </div>);
+
+}
+
+Object.assign(window, { CareersPage });
+
+/* ===== 5af5e491-0c88-412e-8fe8-962be7ca0a87 (application/javascript) ===== */
+// SC — Navigation. Sticky HUD bar: red top-accent line, glass, full-height links.
+
+const NAV_PAGES = [
+  { id: 'home',           label: 'Home'           },
+  { id: 'services',       label: 'Services'       },
+  { id: 'products',       label: 'Products'       },
+  { id: 'certifications', label: 'Certifications' },
+  { id: 'careers',        label: 'Careers'        },
+  { id: 'about',          label: 'About'          },
+];
+
+function Nav({ page, setPage, theme, toggleTheme }) {
+  return (
+    <nav className="sc-nav" data-comment-anchor="75f076bb26-nav-15-5">
+
+      {/* ── Logo ──────────────────────────────────────────── */}
+      <a
+        href="#home"
+        onClick={e => { e.preventDefault(); setPage('home'); }}
+        style={{
+          display: 'flex', alignItems: 'center', padding: '0 20px',
+          borderRight: '1px solid rgba(255,255,255,0.06)',
+          textDecoration: 'none', flexShrink: 0,
+        }}>
+        <img
+          src={theme === 'light' ? 'assets/sc-logo.svg' : 'assets/sc-logo-light.svg'}
+          alt="Software Consultancy"
+          className="sc-nav__logo"
+          style={{ height: 38, width: 'auto', display: 'block' }} />
+      </a>
+
+      {/* ── Page links ────────────────────────────────────── */}
+      <div className="sc-nav__links">
+        {NAV_PAGES.map(p => (
+          <NavLink key={p.id} label={p.label} active={page === p.id} onClick={() => setPage(p.id)} />
+        ))}
+      </div>
+
+      <div style={{ flex: 1 }} />
+
+      {/* ── Theme toggle ──────────────────────────────────── */}
+      <div style={{
+        display: 'flex', alignItems: 'center',
+        borderLeft: '1px solid rgba(255,255,255,0.06)',
+        padding: '0 14px', flexShrink: 0,
+      }}>
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
+
+      {/* ── Contact CTA ───────────────────────────────────── */}
+      <div style={{
+        display: 'flex', alignItems: 'center',
+        borderLeft: '1px solid rgba(255,255,255,0.06)',
+        padding: '0 16px', flexShrink: 0,
+      }}>
+        <button
+          onClick={() => setPage('contact')}
+          onMouseEnter={e => e.currentTarget.style.background = 'var(--sc-red-bright)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'var(--sc-red)'}
+          style={{
+            fontFamily: 'var(--font-mono)', fontWeight: 700,
+            fontSize: 10, letterSpacing: '1.8px', textTransform: 'uppercase',
+            color: '#fff', background: 'var(--sc-red)', border: 'none',
+            borderRadius: 4, padding: '7px 14px', cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            transition: 'background 150ms ease', whiteSpace: 'nowrap',
+          }}>
+          <span className="sc-nav__cta-label">Contact</span>
+          <ArrowRight size={12} stroke={2} />
+        </button>
+      </div>
+
+    </nav>
+  );
+}
+
+// ── Full-height nav link ───────────────────────────────────────
+function NavLink({ label, active, onClick }) {
+  const [hover, setHover] = React.useState(false);
+  const isLight = document.documentElement.dataset.theme === 'light';
+  return (
+    <a
+      href="#"
+      onClick={e => { e.preventDefault(); onClick(); }}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      className={`sc-nav__link${active ? ' sc-nav__link--active' : ''}`}
+      style={{ color: undefined }}>
+      {label}
+    </a>
+  );
+}
+
+// ── Compact dark/light toggle ──────────────────────────────────
+function ThemeToggle({ theme, onToggle }) {
+  const isDark = theme !== 'light';
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      className="sc-theme-toggle"
+      style={{
+        position: 'relative', display: 'inline-flex', alignItems: 'center',
+        gap: 0, padding: 3, height: 30,
+        background: 'transparent',
+        border: '1px solid rgba(255,255,255,0.12)',
+        borderRadius: 999, cursor: 'pointer',
+        fontFamily: 'var(--font-mono)', fontWeight: 700,
+        fontSize: 9, letterSpacing: '1.5px', textTransform: 'uppercase',
+        transition: 'border-color 150ms ease',
+      }}>
+      <span style={{
+        position: 'absolute', top: 3, bottom: 3,
+        left: isDark ? 3 : 'calc(50% + 0px)',
+        width: 'calc(50% - 3px)',
+        background: 'var(--sc-red)', borderRadius: 999,
+        transition: 'left 180ms ease',
+      }} />
+      <span style={{
+        position: 'relative', zIndex: 1, padding: '0 10px', height: 22,
+        display: 'inline-flex', alignItems: 'center', gap: 5,
+        color: isDark ? '#fff' : 'rgba(19,19,19,0.4)',
+        transition: 'color 150ms ease',
+      }}>
+        <Moon size={10} stroke={2} />Dark
+      </span>
+      <span style={{
+        position: 'relative', zIndex: 1, padding: '0 10px', height: 22,
+        display: 'inline-flex', alignItems: 'center', gap: 5,
+        color: isDark ? 'rgba(255,255,255,0.4)' : '#fff',
+        transition: 'color 150ms ease',
+      }}>
+        <Sun size={10} stroke={2} />Light
+      </span>
+    </button>
+  );
+}
+
+function Moon({ size = 14, stroke = 2 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={stroke} strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  );
+}
+function Sun({ size = 14, stroke = 2 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth={stroke} strokeLinecap="square" strokeLinejoin="miter" aria-hidden="true">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </svg>
+  );
+}
+
+// ── Compact SC mark ────────────────────────────────────────────
+function SCMark({ size = 40 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
+      <polygon points="6,14 18,8 30,14 18,20" fill="#9aa0a5" />
+      <polygon points="30,14 42,8 54,14 42,20" fill="#79868f" />
+      <polygon points="18,20 30,14 30,28 18,34" fill="#65727e" />
+      <polygon points="30,14 42,20 42,34 30,28" fill="#1e2631" />
+      <polygon points="18,34 30,28 42,34 30,40" fill="#3f92b6" />
+      <polygon points="18,34 30,40 30,54 18,48" fill="#1c456b" />
+      <polygon points="30,40 42,34 42,48 30,54" fill="#1f4f79" />
+      <polygon points="6,42 18,48 18,62 6,56" fill="#2b3038" />
+      <polygon points="42,48 54,42 54,56 42,62" fill="#4d5965" />
+    </svg>
+  );
+}
+
+Object.assign(window, { Nav, NavLink, SCMark, NAV_PAGES });
+
+
+/* ===== a9bb45af-ef7d-4ce9-89bd-ec216297a394 (application/javascript) ===== */
+// SC — Contact page
+
+function ContactPage({ setPage }) {
+  const [form, setForm] = React.useState({
+    name: '', email: '', company: '', interest: 'Implementation', message: '',
+  });
+  const [touched, setTouched] = React.useState({});
+  const [submitted, setSubmitted] = React.useState(false);
+
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email);
+  const isValid = form.name.trim() && emailValid && form.message.trim().length >= 10;
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setTouched({ name: true, email: true, message: true });
+    if (isValid) setSubmitted(true);
+  };
+
+  if (submitted) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32, padding: '40px 0' }}>
+        <FeatureTile
+          variant="red"
+          kicker="Message received · we'll be in touch within one business day"
+          headline="Thanks — your message is in our queue."
+          deck="Our partner team triages new enquiries within a business day. If the brief is a fit for SC, you'll hear from a named partner with a written response. If it isn't, we'll say so and (where we can) point you somewhere useful."
+          cta="Back to home"
+          onCtaClick={() => { setSubmitted(false); setPage('home'); }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <Hero
+        kicker="Contact · A 30-minute call beats a 30-page RFP"
+        headline="Tell us where the "
+        accent="rollout's stuck."
+        deck="A short brief on what you need, the system involved, and the timing. We'll triage in one business day and write back with names, time, and price."
+      />
+
+      <section style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr', gap: 24, alignItems: 'flex-start' }}>
+        {/* Form */}
+        <article style={{
+          background: 'rgba(255,255,255,0.03)',
+          backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderTop: '1px solid rgba(31,79,121,0.4)',
+          borderRadius: 16, padding: '36px 40px',
+        }}>
+          <Kicker color="red">Brief us</Kicker>
+          <h3 style={{
+            fontFamily: 'var(--font-display)', fontWeight: 900,
+            fontSize: 'clamp(34px, 4vw, 56px)', lineHeight: 0.95,
+            color: '#fff', margin: '20px 0 28px', maxWidth: '14ch',
+          }}>What are we solving?</h3>
+          <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <Field
+              label="Your name"
+              value={form.name}
+              onChange={(v) => setForm(f => ({ ...f, name: v }))}
+              onBlur={() => setTouched(t => ({ ...t, name: true }))}
+              error={touched.name && !form.name.trim() ? 'Required' : null}
+              placeholder="First Last"
+            />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <Field
+                label="Work email"
+                type="email"
+                value={form.email}
+                onChange={(v) => setForm(f => ({ ...f, email: v }))}
+                onBlur={() => setTouched(t => ({ ...t, email: true }))}
+                error={touched.email && form.email && !emailValid ? 'Enter a valid email' : (touched.email && !form.email ? 'Required' : null)}
+                placeholder="you@company.com"
+              />
+              <Field
+                label="Company"
+                value={form.company}
+                onChange={(v) => setForm(f => ({ ...f, company: v }))}
+                placeholder="Acme Holdings"
+              />
+            </div>
+            <SelectField
+              label="What's the engagement about?"
+              value={form.interest}
+              onChange={(v) => setForm(f => ({ ...f, interest: v }))}
+              options={['Implementation', 'Support', 'Vertical / Portal build', 'Automation & Analytics', 'Other']}
+            />
+            <Field
+              label="Tell us about the work"
+              value={form.message}
+              onChange={(v) => setForm(f => ({ ...f, message: v }))}
+              onBlur={() => setTouched(t => ({ ...t, message: true }))}
+              error={touched.message && form.message.trim().length < 10 ? 'A short paragraph helps — at least 10 characters' : null}
+              placeholder="System, module, timing, decisions you need to make. Plain English is fine."
+              multiline
+            />
+            <div style={{
+              display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center', flexWrap: 'wrap', gap: 16, paddingTop: 6,
+            }}>
+              <span style={{
+                fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 11,
+                letterSpacing: '1.1px', textTransform: 'uppercase', color: '#949494',
+              }}>Response within one business day · NDA on request</span>
+              <PrimaryButton type="submit">Send brief <ArrowRight size={14} stroke={2} /></PrimaryButton>
+            </div>
+          </form>
+        </article>
+
+        {/* Contact channels */}
+        <aside style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <ChannelCard
+            icon={Mail}
+            label="Partner desk"
+            value="partners@softwareconsultancy.com"
+            sub="Read by a partner. Reply within 1 business day."
+          />
+          <ChannelCard
+            icon={Briefcase}
+            label="Careers"
+            value="careers@softwareconsultancy.com"
+            sub="Send a CV. Mention the role code if you have it."
+            onClick={() => setPage('careers')}
+          />
+          <ChannelCard
+            icon={Phone}
+            label="Switchboard"
+            value="+962 6 5XX XXXX"
+            sub="Mon–Thu 09:00–17:00 AST · Voicemail otherwise."
+          />
+        </aside>
+      </section>
+
+      {/* Offices */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Offices"
+          title="Where we are."
+          deck="Delivery is hybrid — most engagements include on-site weeks. Pick the closest office and we'll route you to the right partner."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <OfficeCard
+            city="Amman"
+            country="Jordan · HQ"
+            address={['Software Consultancy HQ', 'Abdali Boulevard', 'Amman 11183']}
+            tz="UTC+3 · Mon–Thu"
+            primary
+          />
+          <OfficeCard
+            city="Riyadh"
+            country="Saudi Arabia"
+            address={['Olaya District', 'King Fahd Road', 'Riyadh 12333']}
+            tz="UTC+3 · Sun–Thu"
+          />
+          <OfficeCard
+            city="Dubai"
+            country="United Arab Emirates"
+            address={['DIFC · The Gate Avenue', 'Level 5', 'Dubai 506611']}
+            tz="UTC+4 · Mon–Fri"
+          />
+        </div>
+      </section>
+
+      <FeatureTile
+        variant="slate"
+        kicker="Already a client?"
+        headline="Support portal access stays in your support contact."
+        deck="If you're an SC support client and you need to log a ticket, your named support lead has the URL. Tickets logged here just get forwarded — there's no triage shortcut."
+      />
+    </div>
+  );
+}
+
+function Field({ label, value, onChange, onBlur, error, placeholder, type = 'text', multiline }) {
+  const [focused, setFocused] = React.useState(false);
+  const borderColor = error
+    ? 'var(--sc-red-bright)'
+    : focused ? 'var(--sc-red)' : '#ffffff';
+  const sharedStyle = {
+    width: '100%',
+    background: 'rgba(255,255,255,0.05)',
+    color: '#fff',
+    padding: '14px 16px',
+    borderRadius: 4,
+    border: `1px solid ${borderColor}`,
+    fontFamily: 'var(--font-sans)',
+    fontSize: 15,
+    outline: 'none',
+    transition: 'border-color 150ms ease',
+    resize: multiline ? 'vertical' : 'none',
+    minHeight: multiline ? 120 : 'auto',
+  };
+  return (
+    <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+        letterSpacing: '1.8px', textTransform: 'uppercase', color: '#fff',
+      }}>{label}</span>
+      {multiline ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => { setFocused(false); onBlur && onBlur(); }}
+          placeholder={placeholder}
+          style={sharedStyle}
+        />
+      ) : (
+        <input
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => { setFocused(false); onBlur && onBlur(); }}
+          placeholder={placeholder}
+          style={sharedStyle}
+        />
+      )}
+      {error && <span style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 11,
+        letterSpacing: '1.1px', textTransform: 'uppercase', color: 'var(--sc-red-bright)',
+      }}>→ {error}</span>}
+    </label>
+  );
+}
+
+function SelectField({ label, value, onChange, options }) {
+  return (
+    <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+        letterSpacing: '1.8px', textTransform: 'uppercase', color: '#fff',
+      }}>{label}</span>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {options.map(o => (
+          <button
+            key={o}
+            type="button"
+            onClick={() => onChange(o)}
+            style={{
+              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+              letterSpacing: '1.5px', textTransform: 'uppercase',
+              padding: '10px 16px', borderRadius: 999,
+              background: value === o ? 'var(--sc-red)' : 'transparent',
+              color: '#fff',
+              border: `1px solid ${value === o ? 'var(--sc-red)' : '#ffffff'}`,
+              cursor: 'pointer',
+              transition: 'background 150ms ease, border-color 150ms ease',
+            }}
+          >{o}</button>
+        ))}
+      </div>
+    </label>
+  );
+}
+
+function ChannelCard({ icon: I, label, value, sub, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 12, padding: '24px 26px',
+        display: 'flex', flexDirection: 'column', gap: 12,
+        cursor: onClick ? 'pointer' : 'default',
+      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div style={{
+          width: 36, height: 36, borderRadius: 8,
+          background: 'var(--sc-red)', display: 'grid', placeItems: 'center',
+        }}><I size={18} stroke={2} color="#fff" /></div>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+          letterSpacing: '1.8px', textTransform: 'uppercase', color: '#fff',
+        }}>{label}</div>
+      </div>
+      <div style={{
+        fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 17,
+        color: '#fff', wordBreak: 'break-word',
+      }}>{value}</div>
+      <div style={{ fontSize: 13, lineHeight: 1.5, color: '#949494' }}>{sub}</div>
+    </div>
+  );
+}
+
+function OfficeCard({ city, country, address, tz, primary }) {
+  return (
+    <article style={{
+      background: primary ? 'var(--sc-red)' : 'rgba(255,255,255,0.03)',
+      backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+      border: primary ? 'none' : '1px solid rgba(255,255,255,0.07)',
+      borderTop: primary ? '1px solid rgba(255,255,255,0.25)' : '1px solid rgba(31,79,121,0.3)',
+      borderRadius: 16, padding: '28px 32px',
+      display: 'flex', flexDirection: 'column', gap: 16,
+      minHeight: 240,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <MapPin size={22} stroke={2} color="#fff" />
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+          letterSpacing: '1.5px', textTransform: 'uppercase', color: '#fff', opacity: 0.85,
+        }}>{tz}</span>
+      </div>
+      <div>
+        <div style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(32px, 3.5vw, 52px)', lineHeight: 0.95,
+          color: '#fff',
+        }}>{city}</div>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+          letterSpacing: '1.8px', textTransform: 'uppercase', color: '#fff', opacity: 0.85, marginTop: 6,
+        }}>{country}</div>
+      </div>
+      <div style={{ flex: 1 }} />
+      <div style={{ fontFamily: 'var(--font-sans)', fontSize: 14, lineHeight: 1.55, color: '#fff', opacity: 0.95 }}>
+        {address.map((line, i) => <div key={i}>{line}</div>)}
+      </div>
+    </article>
+  );
+}
+
+Object.assign(window, { ContactPage });
+
+
+/* ===== a52dc051-41bb-45b7-a2f3-d23cb2e25ed7 (application/javascript) ===== */
+// SC — Buttons. Inherits Voltline button vocabulary, now using SC red as the
+// primary accent. Every button is a pill, mono UPPERCASE label.
+
+const scMonoLabel = {
+  fontFamily: 'var(--font-mono)',
+  fontWeight: 700,
+  fontSize: 12,
+  letterSpacing: '1.5px',
+  textTransform: 'uppercase',
+  lineHeight: 1,
+};
+
+function PrimaryButton({ children, onClick, disabled, style, type = 'button' }) {
+  const [hover, setHover] = React.useState(false);
+  const [pressed, setPressed] = React.useState(false);
+  const base = {
+    ...scMonoLabel,
+    padding: '14px 24px',
+    borderRadius: 24,
+    border: 'none',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    background: 'var(--sc-red)',
+    color: '#fff',
+    boxShadow: 'none',
+    transition: 'background 180ms ease, box-shadow 180ms ease, opacity 180ms ease, color 180ms ease',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 10,
+    ...style,
+  };
+  if (hover && !pressed) {
+    base.background = 'var(--sc-red-bright)';
+    base.color = '#fff';
+    base.boxShadow = '0 0 0 1px var(--sc-red-bright)';
+  }
+  if (pressed) {
+    base.background = 'var(--sc-red-deep)';
+    base.opacity = 0.85;
+  }
+  return (
+    <button
+      type={type}
+      style={base}
+      disabled={disabled}
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => { setHover(false); setPressed(false); }}
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SlateButton({ children, onClick, style }) {
+  const [hover, setHover] = React.useState(false);
+  const base = {
+    ...scMonoLabel,
+    padding: '14px 22px',
+    borderRadius: 24,
+    border: 'none',
+    cursor: 'pointer',
+    background: hover ? 'rgba(255,255,255,0.92)' : '#2d2d2d',
+    color: hover ? '#131313' : '#e9e9e9',
+    boxShadow: hover ? '0 0 0 1px #c2c2c2' : 'none',
+    transition: 'background 180ms ease, color 180ms ease, box-shadow 180ms ease',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 10,
+    ...style,
+  };
+  return (
+    <button
+      style={base}
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      {children}
+    </button>
+  );
+}
+
+function OutlinedButton({ children, onClick, color = 'red', style }) {
+  const [hover, setHover] = React.useState(false);
+  const palette = {
+    red:   { stroke: 'var(--sc-red)',        text: '#fff', hoverBg: 'var(--sc-red)',        hoverText: '#fff' },
+    white: { stroke: '#ffffff',              text: '#fff', hoverBg: '#fff',                 hoverText: '#131313' },
+    dark:  { stroke: 'var(--sc-steel-700)',  text: '#fff', hoverBg: 'var(--sc-steel-800)',  hoverText: '#fff' },
+  };
+  const p = palette[color] || palette.red;
+  const base = {
+    ...scMonoLabel,
+    padding: '12px 22px',
+    borderRadius: 40,
+    background: hover ? p.hoverBg : 'transparent',
+    color: hover ? p.hoverText : p.text,
+    border: `1px solid ${p.stroke}`,
+    cursor: 'pointer',
+    transition: 'background 150ms ease, color 150ms ease',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 10,
+    ...style,
+  };
+  return (
+    <button
+      style={base}
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      {children}
+    </button>
+  );
+}
+
+function PillTag({ children, color = 'red', style }) {
+  const palette = {
+    red:      { bg: 'var(--sc-red)',         fg: '#fff' },
+    redBright:{ bg: 'var(--sc-red-bright)',  fg: '#fff' },
+    redDark:  { bg: 'var(--sc-red-deep)',    fg: '#fff' },
+    slate:    { bg: '#2d2d2d',               fg: '#e9e9e9' },
+    steelDark:{ bg: 'var(--sc-steel-800)',   fg: '#fff' },
+    steel:    { bg: 'var(--sc-steel-400)',   fg: '#fff' },
+    steelLight:{ bg: 'var(--sc-steel-100)',  fg: '#131313' },
+    white:    { bg: '#ffffff',               fg: '#131313' },
+    outline:  { bg: 'transparent',           fg: '#fff', border: '1px solid #fff' },
+    outlineRed:{ bg: 'transparent',          fg: 'var(--sc-red)', border: '1px solid var(--sc-red)' },
+  };
+  const p = palette[color] || palette.red;
+  return (
+    <span style={{
+      background: p.bg,
+      color: p.fg,
+      border: p.border || 'none',
+      borderRadius: 20,
+      padding: '4px 11px',
+      fontFamily: 'var(--font-mono)',
+      fontWeight: 700,
+      fontSize: 11,
+      letterSpacing: '1.8px',
+      textTransform: 'uppercase',
+      lineHeight: 1.3,
+      display: 'inline-block',
+      ...style,
+    }}>{children}</span>
+  );
+}
+
+Object.assign(window, { PrimaryButton, SlateButton, OutlinedButton, PillTag, scMonoLabel });
+
+
+/* ===== edd53077-c199-4ae8-a0a5-56d7b4588362 (application/javascript) ===== */
+// SC — Products page
+
+const PRODUCTS = [
+  {
+    id: 'zatca',
+    code: 'P/01',
+    name: 'ZATCA II Portal',
+    tagline: 'Phase-2 e-invoicing, cleared to the regulator from Fusion.',
+    description: 'A clearance and reporting portal layered on Oracle Fusion. ZATCA II Phase-2 compliant, with a queue that drains to the regulator at line-rate and a console for tax teams to handle exceptions.',
+    bullets: [
+      'Phase-2 (clearance + reporting) certified flow',
+      'Direct integration with Fusion AR / AP / Inventory',
+      'Exception console for tax teams — no SQL required',
+      'Audit ledger for every clearance, retry, and rejection',
+    ],
+    metric: { value: '1.2M', label: 'Invoices / month at line-rate' },
+    region: 'KSA',
+    variant: 'red',
+    icon: Shield,
+  },
+  {
+    id: 'franchise',
+    code: 'P/02',
+    name: 'Franchise Portal',
+    tagline: 'Franchisee onboarding, royalties, and reporting — out of one console.',
+    description: 'A multi-tenant portal sitting on top of Fusion ERP for franchise operators. Outlet onboarding, royalty calculation, inventory replenishment, and the reporting that head office actually reads.',
+    bullets: [
+      'Multi-tenant franchisee onboarding with KYC',
+      'Royalty calculation engine tied to Fusion ledger',
+      'Replenishment workflows with SCM Cloud',
+      'Outlet-level P&L visible to franchisee and franchisor',
+    ],
+    metric: { value: '400+', label: 'Outlets supported by deployed clients' },
+    region: 'EMEA · MENA',
+    variant: 'slate',
+    icon: Database,
+  },
+  {
+    id: 'b2b',
+    code: 'P/03',
+    name: 'B2B E-Commerce Portal',
+    tagline: 'Customer-specific catalogues, priced from Fusion in real time.',
+    description: 'A B2B commerce front-end for industries with negotiated price lists and contract terms. Orders flow into Fusion; quotes, credit, and stock visibility flow back out.',
+    bullets: [
+      'Customer-specific catalogue and price-list rendering',
+      'Real-time stock availability across warehouses',
+      'Quote-to-order with credit and approvals from Fusion',
+      'Self-service order tracking, returns, and reorder',
+    ],
+    metric: { value: '24/7', label: 'Self-service order capture' },
+    region: 'EMEA · MENA',
+    variant: 'redDeep',
+    icon: Box,
+  },
+];
+
+const REPOS = [
+  {
+    id: 'dashboards',
+    code: 'R/01',
+    name: 'Dashboards & Reports Repository',
+    tagline: 'Predefined dashboards and OTBI reports across every Fusion module we deliver.',
+    bullets: [
+      'Finance: cash position, AR aging, AP aging, GR/IR, intercompany',
+      'HCM: headcount, attrition, payroll variance, comp-ratio',
+      'SCM: open POs, on-hand vs. days of cover, sourcing cycle time',
+      'Procurement: spend-by-supplier, contract leakage, requisition aging',
+    ],
+    count: '120+',
+    countLabel: 'Dashboards and reports, version-controlled',
+    icon: BarChart,
+  },
+  {
+    id: 'integrations',
+    code: 'R/02',
+    name: 'Government Platforms Integration Repository',
+    tagline: 'Prebuilt OIC integrations to the government platforms our clients actually need.',
+    bullets: [
+      'ZATCA — clearance + reporting',
+      'GOSI — payroll contributions & deductions',
+      'Mudad — wage protection',
+      'MOL / Qiwa — workforce filings',
+      'SADAD — payment gateway',
+    ],
+    count: '28',
+    countLabel: 'Prebuilt OIC integrations',
+    icon: Link2,
+  },
+];
+
+function ProductsPage({ setPage }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <Hero
+        kicker="Products · Verticals & accelerators"
+        headline="Verticals built on Fusion. "
+        accent="Run as products."
+        deck="The portals, modules, and integration libraries we keep building because the standard product doesn't go all the way. Released, supported, and roadmapped like any other software."
+      >
+        <PrimaryButton onClick={() => setPage('contact')}>Request a walkthrough <ArrowRight size={14} stroke={2} /></PrimaryButton>
+        <OutlinedButton color="white" onClick={() => setPage('services')}>How we deliver</OutlinedButton>
+      </Hero>
+
+      {/* Product cards */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Vertical portals"
+          title="Three portals, in production."
+          deck="Each portal ships as a tenanted product with its own release train, security review, and roadmap. None of them are once-off custom builds."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {PRODUCTS.map(p => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </section>
+
+      {/* Repositories */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Accelerator repositories"
+          title="The library we ship from on day one."
+          deck="On a typical engagement, a third of what would otherwise be net-new build is already in our repository. We bring the artefacts; the client gets a head start."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          {REPOS.map(r => <RepoCard key={r.id} repo={r} />)}
+        </div>
+      </section>
+
+      {/* Stack diagram */}
+      <section style={{
+        background: 'rgba(255,255,255,0.04)',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 16, padding: '40px 48px 48px',
+      }}>
+        <Kicker color="red">How it composes</Kicker>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(34px, 4vw, 56px)', lineHeight: 0.95,
+          color: '#fff', margin: '20px 0 28px', maxWidth: '18ch',
+        }}>One Fusion instance, three portals, one repository.</h3>
+        <StackDiagram />
+      </section>
+
+      <FeatureTile
+        variant="redDeep"
+        kicker="Roadmap"
+        headline="Next release: ZATCA Phase-3 + UAE FTA support."
+        deck="Phase-3 e-invoicing is in beta with two pilot tenants. UAE Federal Tax Authority clearance lands the quarter after. If you're rolling out e-invoicing in either market in 2026, talk to us early."
+        cta="Get on the beta list"
+        onCtaClick={() => setPage('contact')}
+      />
+    </div>
+  );
+}
+
+function ProductCard({ product }) {
+  const palette = {
+    red:     { bg: 'var(--sc-red)',         fg: '#fff' },
+    redDeep: { bg: 'var(--sc-red-deep)',    fg: '#fff' },
+    slate:   { bg: 'var(--sc-steel-800)',   fg: '#fff' },
+  };
+  const p = palette[product.variant];
+  return (
+    <article style={{
+      background: p.bg, color: p.fg, borderRadius: 24,
+      padding: '32px 28px 28px',
+      display: 'flex', flexDirection: 'column', gap: 18,
+      minHeight: 540,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{
+            fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+            letterSpacing: '1.9px', textTransform: 'uppercase', color: p.fg, opacity: 0.75,
+          }}>{product.code} · {product.region}</div>
+          <h3 style={{
+            fontFamily: 'var(--font-display)', fontWeight: 900,
+            fontSize: 'clamp(28px, 2.4vw, 36px)', lineHeight: 1, letterSpacing: '0.2px',
+            margin: '10px 0 0', color: p.fg,
+          }}>{product.name}</h3>
+        </div>
+        <product.icon size={28} stroke={2} />
+      </div>
+
+      <p style={{
+        fontFamily: 'var(--font-serif)', fontStyle: 'italic',
+        fontSize: 18, lineHeight: 1.35, color: p.fg, margin: 0,
+      }}>{product.tagline}</p>
+
+      <p style={{
+        fontFamily: 'var(--font-sans)', fontSize: 14, lineHeight: 1.55,
+        color: p.fg, opacity: 0.85, margin: 0,
+      }}>{product.description}</p>
+
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {product.bullets.map((b, i) => (
+          <li key={i} style={{
+            display: 'flex', gap: 10, alignItems: 'flex-start',
+            fontFamily: 'var(--font-sans)', fontSize: 13, lineHeight: 1.45,
+            color: p.fg, opacity: 0.9,
+          }}>
+            <span style={{
+              marginTop: 6, width: 6, height: 6, borderRadius: '50%',
+              background: p.fg, flexShrink: 0,
+            }} />
+            {b}
+          </li>
+        ))}
+      </ul>
+
+      <div style={{ flex: 1 }} />
+
+      <div style={{
+        marginTop: 12, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.2)',
+        display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap',
+      }}>
+        <div className="sc-tnum" style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(32px, 3vw, 44px)', lineHeight: 1, color: p.fg,
+        }}>{product.metric.value}</div>
+        <div style={{
+          fontFamily: 'var(--font-sans)', fontSize: 12, lineHeight: 1.4,
+          color: p.fg, opacity: 0.8, maxWidth: 200,
+        }}>{product.metric.label}</div>
+      </div>
+    </article>
+  );
+}
+
+function RepoCard({ repo }) {
+  return (
+    <article style={{
+      background: 'rgba(255,255,255,0.04)',
+      backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderRadius: 16,
+      padding: '36px 36px 32px',
+      display: 'grid', gridTemplateColumns: '1fr auto', gap: 24, alignItems: 'flex-start',
+    }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+          letterSpacing: '1.8px', textTransform: 'uppercase', color: 'var(--sc-red)',
+        }}>{repo.code} · Repository</div>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(26px, 2.4vw, 36px)', lineHeight: 1, color: '#fff',
+          margin: 0, maxWidth: '20ch',
+        }}>{repo.name}</h3>
+        <p style={{
+          fontFamily: 'var(--font-serif)', fontStyle: 'italic',
+          fontSize: 16, lineHeight: 1.35, color: 'rgba(255,255,255,0.5)', margin: 0,
+        }}>{repo.tagline}</p>
+        <ul style={{ listStyle: 'none', padding: 0, margin: '6px 0 0', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {repo.bullets.map((b, i) => (
+            <li key={i} style={{
+              display: 'flex', gap: 10, alignItems: 'flex-start',
+              fontFamily: 'var(--font-sans)', fontSize: 14, lineHeight: 1.5,
+              color: 'rgba(255,255,255,0.7)',
+            }}>
+              <span style={{
+                marginTop: 8, width: 6, height: 6, borderRadius: '50%',
+                background: 'var(--sc-red)', flexShrink: 0,
+              }} />
+              {b}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div style={{
+        background: 'rgba(255,255,255,0.06)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 12, padding: '20px 22px',
+        display: 'flex', flexDirection: 'column', gap: 4, minWidth: 140,
+      }}>
+        <repo.icon size={22} stroke={2} color="var(--sc-red)" />
+        <div className="sc-tnum" style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(36px, 4vw, 56px)', lineHeight: 1, color: 'var(--sc-red)',
+          marginTop: 10,
+        }}>{repo.count}</div>
+        <div style={{
+          fontFamily: 'var(--font-sans)', fontSize: 12, lineHeight: 1.4,
+          color: 'rgba(255,255,255,0.5)',
+        }}>{repo.countLabel}</div>
+      </div>
+    </article>
+  );
+}
+
+// Visual: layered stack — Fusion + portals + repository
+function StackDiagram() {
+  const layers = [
+    { label: 'Tenant UIs', sub: 'ZATCA II · Franchise · B2B Commerce', bg: 'var(--sc-red)', fg: '#fff' },
+    { label: 'SC Accelerator Layer', sub: 'OIC flows · 28 gov. integrations · 120+ dashboards & reports', bg: 'var(--sc-red-deep)', fg: '#fff' },
+    { label: 'Oracle Fusion Cloud', sub: 'ERP · HCM · SCM · CX · OCI', bg: 'var(--sc-steel-800)', fg: '#fff' },
+    { label: 'Data + observability', sub: 'OCI + OIC monitoring + audit ledger', bg: 'var(--sc-steel-500)', fg: '#fff' },
+  ];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {layers.map((l, i) => (
+        <div key={i} style={{
+          background: l.bg, color: l.fg,
+          borderRadius: 14, padding: '20px 24px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+          marginLeft: i * 8, marginRight: i * 8,
+        }}>
+          <div style={{
+            fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+            letterSpacing: '1.8px', textTransform: 'uppercase', minWidth: 64,
+          }}>L{4 - i}</div>
+          <div style={{
+            fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 18,
+            flex: 1,
+          }}>{l.label}</div>
+          <div style={{
+            fontFamily: 'var(--font-sans)', fontSize: 13, opacity: 0.85, textAlign: 'right',
+          }}>{l.sub}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+Object.assign(window, { ProductsPage });
+
+
+/* ===== 04ccdf3e-a83b-4331-a025-9327449fed20 (application/javascript) ===== */
+!function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e():"function"==typeof define&&define.amd?define([],e):"object"==typeof exports?exports._vantaEffect=e():t._vantaEffect=e()}("undefined"!=typeof self?self:this,(()=>(()=>{"use strict";var t={d:(e,i)=>{for(var s in i)t.o(i,s)&&!t.o(e,s)&&Object.defineProperty(e,s,{enumerable:!0,get:i[s]})},o:(t,e)=>Object.prototype.hasOwnProperty.call(t,e),r:t=>{"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})}},e={};function i(){return"undefined"!=typeof navigator?/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<600:null}function s(t,e){return null==t&&(t=0),null==e&&(e=1),Math.floor(t+Math.random()*(e-t+1))}t.r(e),t.d(e,{default:()=>u}),Number.prototype.clamp=function(t,e){return Math.min(Math.max(this,t),e)};const o=t=>.299*t.r+.587*t.g+.114*t.b;function n(t){for(;t.children&&t.children.length>0;)n(t.children[0]),t.remove(t.children[0]);t.geometry&&t.geometry.dispose(),t.material&&(Object.keys(t.material).forEach((e=>{t.material[e]&&null!==t.material[e]&&"function"==typeof t.material[e].dispose&&t.material[e].dispose()})),t.material.dispose())}const r="object"==typeof window;let h=r&&window.THREE||{};r&&!window.VANTA&&(window.VANTA={});const a=r&&window.VANTA||{};a.register=(t,e)=>a[t]=t=>new e(t),a.version="0.5.24";const l=function(){return Array.prototype.unshift.call(arguments,"[VANTA]"),console.error.apply(this,arguments)};a.VantaBase=class{constructor(t={}){if(!r)return!1;a.current=this,this.windowMouseMoveWrapper=this.windowMouseMoveWrapper.bind(this),this.windowTouchWrapper=this.windowTouchWrapper.bind(this),this.windowGyroWrapper=this.windowGyroWrapper.bind(this),this.resize=this.resize.bind(this),this.animationLoop=this.animationLoop.bind(this),this.restart=this.restart.bind(this);const e="function"==typeof this.getDefaultOptions?this.getDefaultOptions():this.defaultOptions;if(this.options=Object.assign({mouseControls:!0,touchControls:!0,gyroControls:!1,minHeight:200,minWidth:200,scale:1,scaleMobile:1},e),(t instanceof HTMLElement||"string"==typeof t)&&(t={el:t}),Object.assign(this.options,t),this.options.THREE&&(h=this.options.THREE),this.el=this.options.el,null==this.el)l('Instance needs "el" param!');else if(!(this.options.el instanceof HTMLElement)){const t=this.el;if(this.el=(i=t,document.querySelector(i)),!this.el)return void l("Cannot find element",t)}var i,s;this.prepareEl(),this.initThree(),this.setSize();try{this.init()}catch(t){return l("Init error",t),this.renderer&&this.renderer.domElement&&this.el.removeChild(this.renderer.domElement),void(this.options.backgroundColor&&(console.log("[VANTA] Falling back to backgroundColor"),this.el.style.background=(s=this.options.backgroundColor,"number"==typeof s?"#"+("00000"+s.toString(16)).slice(-6):s)))}this.initMouse(),this.resize(),this.animationLoop();const o=window.addEventListener;o("resize",this.resize),window.requestAnimationFrame(this.resize),this.options.mouseControls&&(o("scroll",this.windowMouseMoveWrapper),o("mousemove",this.windowMouseMoveWrapper)),this.options.touchControls&&(o("touchstart",this.windowTouchWrapper),o("touchmove",this.windowTouchWrapper)),this.options.gyroControls&&o("deviceorientation",this.windowGyroWrapper)}setOptions(t={}){Object.assign(this.options,t),this.triggerMouseMove()}prepareEl(){let t,e;if("undefined"!=typeof Node&&Node.TEXT_NODE)for(t=0;t<this.el.childNodes.length;t++){const e=this.el.childNodes[t];if(e.nodeType===Node.TEXT_NODE){const t=document.createElement("span");t.textContent=e.textContent,e.parentElement.insertBefore(t,e),e.remove()}}for(t=0;t<this.el.children.length;t++)e=this.el.children[t],"static"===getComputedStyle(e).position&&(e.style.position="relative"),"auto"===getComputedStyle(e).zIndex&&(e.style.zIndex=1);"static"===getComputedStyle(this.el).position&&(this.el.style.position="relative")}applyCanvasStyles(t,e={}){Object.assign(t.style,{position:"absolute",zIndex:0,top:0,left:0,background:""}),Object.assign(t.style,e),t.classList.add("vanta-canvas")}initThree(){h.WebGLRenderer?(this.renderer=new h.WebGLRenderer({alpha:!0,antialias:!0}),this.el.appendChild(this.renderer.domElement),this.applyCanvasStyles(this.renderer.domElement),isNaN(this.options.backgroundAlpha)&&(this.options.backgroundAlpha=1),this.scene=new h.Scene):console.warn("[VANTA] No THREE defined on window")}getCanvasElement(){return this.renderer?this.renderer.domElement:this.p5renderer?this.p5renderer.canvas:void 0}getCanvasRect(){const t=this.getCanvasElement();return!!t&&t.getBoundingClientRect()}windowMouseMoveWrapper(t){const e=this.getCanvasRect();if(!e)return!1;const i=t.clientX-e.left,s=t.clientY-e.top;i>=0&&s>=0&&i<=e.width&&s<=e.height&&(this.mouseX=i,this.mouseY=s,this.options.mouseEase||this.triggerMouseMove(i,s))}windowTouchWrapper(t){const e=this.getCanvasRect();if(!e)return!1;if(1===t.touches.length){const i=t.touches[0].clientX-e.left,s=t.touches[0].clientY-e.top;i>=0&&s>=0&&i<=e.width&&s<=e.height&&(this.mouseX=i,this.mouseY=s,this.options.mouseEase||this.triggerMouseMove(i,s))}}windowGyroWrapper(t){const e=this.getCanvasRect();if(!e)return!1;const i=Math.round(2*t.alpha)-e.left,s=Math.round(2*t.beta)-e.top;i>=0&&s>=0&&i<=e.width&&s<=e.height&&(this.mouseX=i,this.mouseY=s,this.options.mouseEase||this.triggerMouseMove(i,s))}triggerMouseMove(t,e){void 0===t&&void 0===e&&(this.options.mouseEase?(t=this.mouseEaseX,e=this.mouseEaseY):(t=this.mouseX,e=this.mouseY)),this.uniforms&&(this.uniforms.iMouse.value.x=t/this.scale,this.uniforms.iMouse.value.y=e/this.scale);const i=t/this.width,s=e/this.height;"function"==typeof this.onMouseMove&&this.onMouseMove(i,s)}setSize(){this.scale||(this.scale=1),i()&&this.options.scaleMobile?this.scale=this.options.scaleMobile:this.options.scale&&(this.scale=this.options.scale),this.width=Math.max(this.el.offsetWidth,this.options.minWidth),this.height=Math.max(this.el.offsetHeight,this.options.minHeight)}initMouse(){(!this.mouseX&&!this.mouseY||this.mouseX===this.options.minWidth/2&&this.mouseY===this.options.minHeight/2)&&(this.mouseX=this.width/2,this.mouseY=this.height/2,this.triggerMouseMove(this.mouseX,this.mouseY))}resize(){this.setSize(),this.camera&&(this.camera.aspect=this.width/this.height,"function"==typeof this.camera.updateProjectionMatrix&&this.camera.updateProjectionMatrix()),this.renderer&&(this.renderer.setSize(this.width,this.height),this.renderer.setPixelRatio(window.devicePixelRatio/this.scale)),"function"==typeof this.onResize&&this.onResize()}isOnScreen(){const t=this.el.offsetHeight,e=this.el.getBoundingClientRect(),i=window.pageYOffset||(document.documentElement||document.body.parentNode||document.body).scrollTop,s=e.top+i;return s-window.innerHeight<=i&&i<=s+t}animationLoop(){this.t||(this.t=0),this.t2||(this.t2=0);const t=performance.now();if(this.prevNow){let e=(t-this.prevNow)/(1e3/60);e=Math.max(.2,Math.min(e,5)),this.t+=e,this.t2+=(this.options.speed||1)*e,this.uniforms&&(this.uniforms.iTime.value=.016667*this.t2)}return this.prevNow=t,this.options.mouseEase&&(this.mouseEaseX=this.mouseEaseX||this.mouseX||0,this.mouseEaseY=this.mouseEaseY||this.mouseY||0,Math.abs(this.mouseEaseX-this.mouseX)+Math.abs(this.mouseEaseY-this.mouseY)>.1&&(this.mouseEaseX+=.05*(this.mouseX-this.mouseEaseX),this.mouseEaseY+=.05*(this.mouseY-this.mouseEaseY),this.triggerMouseMove(this.mouseEaseX,this.mouseEaseY))),(this.isOnScreen()||this.options.forceAnimate)&&("function"==typeof this.onUpdate&&this.onUpdate(),this.scene&&this.camera&&(this.renderer.render(this.scene,this.camera),this.renderer.setClearColor(this.options.backgroundColor,this.options.backgroundAlpha)),this.fps&&this.fps.update&&this.fps.update(),"function"==typeof this.afterRender&&this.afterRender()),this.req=window.requestAnimationFrame(this.animationLoop)}restart(){if(this.scene)for(;this.scene.children.length;)this.scene.remove(this.scene.children[0]);"function"==typeof this.onRestart&&this.onRestart(),this.init()}init(){"function"==typeof this.onInit&&this.onInit()}destroy(){"function"==typeof this.onDestroy&&this.onDestroy();const t=window.removeEventListener;t("touchstart",this.windowTouchWrapper),t("touchmove",this.windowTouchWrapper),t("scroll",this.windowMouseMoveWrapper),t("mousemove",this.windowMouseMoveWrapper),t("deviceorientation",this.windowGyroWrapper),t("resize",this.resize),window.cancelAnimationFrame(this.req);const e=this.scene;e&&e.children&&n(e),this.renderer&&(this.renderer.domElement&&this.el.removeChild(this.renderer.domElement),this.renderer=null,this.scene=null),a.current===this&&(a.current=null)}};const c=a.VantaBase;let p="object"==typeof window&&window.THREE;class d extends c{static initClass(){this.prototype.defaultOptions={color:16727937,backgroundColor:2299196,points:10,maxDistance:20,spacing:15,showDots:!0}}constructor(t){p=t.THREE||p,super(t)}genPoint(t,e,i){let s;if(this.points||(this.points=[]),this.options.showDots){const t=new p.SphereGeometry(.25,12,12),e=new p.MeshLambertMaterial({color:this.options.color});s=new p.Mesh(t,e)}else s=new p.Object3D;var o,n;return this.cont.add(s),s.ox=t,s.oy=e,s.oz=i,s.position.set(t,e,i),s.r=(null==(o=-2)&&(o=0),null==(n=2)&&(n=1),o+Math.random()*(n-o)),this.points.push(s)}onInit(){this.cont=new p.Group,this.cont.position.set(0,0,0),this.scene.add(this.cont);let t=this.options.points,{spacing:e}=this.options;i()&&(t=~~(.75*t),e=~~(.65*e));const n=t*t*2;this.linePositions=new Float32Array(n*n*3),this.lineColors=new Float32Array(n*n*3);const r=o(new p.Color(this.options.color)),h=o(new p.Color(this.options.backgroundColor));this.blending=r>h?"additive":"subtractive";const a=new p.BufferGeometry;a.setAttribute("position",new p.BufferAttribute(this.linePositions,3).setUsage(p.DynamicDrawUsage)),a.setAttribute("color",new p.BufferAttribute(this.lineColors,3).setUsage(p.DynamicDrawUsage)),a.computeBoundingSphere(),a.setDrawRange(0,0);const l=new p.LineBasicMaterial({vertexColors:p.VertexColors,blending:"additive"===this.blending?p.AdditiveBlending:null,transparent:!0});this.linesMesh=new p.LineSegments(a,l),this.cont.add(this.linesMesh);for(let i=0;i<=t;i++)for(let o=0;o<=t;o++){const n=s(-3,3),r=(i-t/2)*e+s(-5,5);let h=(o-t/2)*e+s(-5,5);i%2&&(h+=.5*e),this.genPoint(r,n-s(5,15),h),this.genPoint(r+s(-5,5),n+s(5,15),h+s(-5,5))}this.camera=new p.PerspectiveCamera(25,this.width/this.height,.01,1e4),this.camera.position.set(50,100,150),this.scene.add(this.camera);const c=new p.AmbientLight(16777215,.75);return this.scene.add(c),this.spot=new p.SpotLight(16777215,1),this.spot.position.set(0,200,0),this.spot.distance=400,this.spot.target=this.cont,this.scene.add(this.spot)}onDestroy(){this.scene&&this.scene.remove(this.linesMesh),this.spot=this.points=this.linesMesh=this.lineColors=this.linePositions=null}setOptions(t){super.setOptions(t),t.color&&this.points.forEach((e=>{e.material.color=new p.Color(t.color)}))}onUpdate(){let t;const e=this.camera;Math.abs(e.tx-e.position.x)>.01&&(t=e.tx-e.position.x,e.position.x+=.02*t),Math.abs(e.ty-e.position.y)>.01&&(t=e.ty-e.position.y,e.position.y+=.02*t),e.lookAt(new p.Vector3(0,0,0));let i=0,s=0,o=0;const n=new p.Color(this.options.backgroundColor),r=new p.Color(this.options.color),h=r.clone().sub(n);this.rayCaster&&this.rayCaster.setFromCamera(new p.Vector2(this.rcMouseX,this.rcMouseY),this.camera);for(let t=0;t<this.points.length;t++){let e,a;const l=this.points[t];a=this.rayCaster?this.rayCaster.ray.distanceToPoint(l.position):1e3;const c=a.clamp(5,15);if(l.scale.x=l.scale.y=l.scale.z=(.25*(15-c)).clamp(1,100),0!==l.r){let t=Math.atan2(l.position.z,l.position.x);e=Math.sqrt(l.position.z*l.position.z+l.position.x*l.position.x),t+=25e-5*l.r,l.position.x=e*Math.cos(t),l.position.z=e*Math.sin(t)}for(let a=t;a<this.points.length;a++){const t=this.points[a],c=l.position.x-t.position.x,d=l.position.y-t.position.y,u=l.position.z-t.position.z;if(e=Math.sqrt(c*c+d*d+u*u),e<this.options.maxDistance){let a;const c=(2*(1-e/this.options.maxDistance)).clamp(0,1);a="additive"===this.blending?new p.Color(0).lerp(h,c):n.clone().lerp(r,c),this.linePositions[i++]=l.position.x,this.linePositions[i++]=l.position.y,this.linePositions[i++]=l.position.z,this.linePositions[i++]=t.position.x,this.linePositions[i++]=t.position.y,this.linePositions[i++]=t.position.z,this.lineColors[s++]=a.r,this.lineColors[s++]=a.g,this.lineColors[s++]=a.b,this.lineColors[s++]=a.r,this.lineColors[s++]=a.g,this.lineColors[s++]=a.b,o++}}}return this.linesMesh.geometry.setDrawRange(0,2*o),this.linesMesh.geometry.attributes.position.needsUpdate=!0,this.linesMesh.geometry.attributes.color.needsUpdate=!0,.001*this.t}onMouseMove(t,e){const i=this.camera;i.oy||(i.oy=i.position.y,i.ox=i.position.x,i.oz=i.position.z);const s=Math.atan2(i.oz,i.ox),o=Math.sqrt(i.oz*i.oz+i.ox*i.ox),n=s+2*(t-.5)*(this.options.mouseCoeffX||1);i.tz=o*Math.sin(n),i.tx=o*Math.cos(n),i.ty=i.oy+50*(e-.5)*(this.options.mouseCoeffY||1),this.rayCaster,this.rcMouseX=2*t-1,this.rcMouseY=2*-t+1}onRestart(){this.scene&&this.scene.remove(this.linesMesh),this.points=[]}}d.initClass();const u=a.register("NET",d);return e})()));
+
+
+/* ===== f9ce5f19-dc6f-483a-964c-7f9f339e23ff (application/javascript) ===== */
+// SC — App shell. Hash-based routing, top nav, footer, Tweaks panel.
+
+const PAGE_LABELS = {
+  home: 'Home',
+  services: 'Services',
+  products: 'Products',
+  certifications: 'Certifications',
+  careers: 'Careers',
+  about: 'About',
+  contact: 'Contact',
+};
+
+const SC_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#1f4f79",
+  "accentBright": "#3f92b6",
+  "density": "comfortable",
+  "heroLayout": "stacked",
+  "showRailDecor": true
+}/*EDITMODE-END*/;
+
+function App() {
+  const initial = (window.location.hash || '#home').replace('#', '');
+  const [page, setPageState] = React.useState(PAGE_LABELS[initial] ? initial : 'home');
+
+  // Theme — dark by default, persisted in localStorage
+  const [theme, setTheme] = React.useState(() => {
+    try { return localStorage.getItem('sc-theme') || 'dark'; } catch { return 'dark'; }
+  });
+  const toggleTheme = React.useCallback(() => {
+    setTheme(t => {
+      const next = t === 'dark' ? 'light' : 'dark';
+      try { localStorage.setItem('sc-theme', next); } catch {}
+      return next;
+    });
+  }, []);
+  React.useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  const setPage = React.useCallback((p) => {
+    setPageState(p);
+    window.location.hash = p;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
+  React.useEffect(() => {
+    const onHash = () => {
+      const h = (window.location.hash || '#home').replace('#', '');
+      if (PAGE_LABELS[h]) setPageState(h);
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+
+  // Tweaks
+  const [tweaks, setTweak] = useTweaks(SC_TWEAK_DEFAULTS);
+
+  // Apply tweaks to CSS custom properties
+  React.useEffect(() => {
+    const r = document.documentElement.style;
+    r.setProperty('--sc-red', tweaks.accent);
+    r.setProperty('--sc-red-bright', tweaks.accentBright);
+    r.setProperty('--color-jelly-mint', tweaks.accent);
+    r.setProperty('--border-active', tweaks.accent);
+    r.setProperty('--link-hover', tweaks.accentBright);
+    r.setProperty('--depth-active', `inset 0 0 0 1px ${tweaks.accent}`);
+    if (tweaks.density === 'compact') {
+      r.setProperty('--sc-container-pad', '32px');
+      r.setProperty('--sc-feed-gap', '20px');
+    } else if (tweaks.density === 'spacious') {
+      r.setProperty('--sc-container-pad', '64px');
+      r.setProperty('--sc-feed-gap', '36px');
+    } else {
+      r.setProperty('--sc-container-pad', '48px');
+      r.setProperty('--sc-feed-gap', '28px');
+    }
+  }, [tweaks]);
+
+  const PageComponent = ({
+    home: HomePage,
+    services: ServicesPage,
+    products: ProductsPage,
+    certifications: CertificationsPage,
+    careers: CareersPage,
+    about: AboutPage,
+    contact: ContactPage,
+  })[page] || HomePage;
+
+  return (
+    <React.Fragment>
+    <AnimatedBackground theme={theme} />
+    <div className="sc-page" data-screen-label={`SC · ${PAGE_LABELS[page]}`}>
+      <Nav page={page} setPage={setPage} theme={theme} toggleTheme={toggleTheme} />
+      <main style={{ marginTop: 32 }}>
+        <PageComponent setPage={setPage} tweaks={tweaks} />
+      </main>
+      <Footer setPage={setPage} theme={theme} />
+
+      </div>
+    <TweaksPanel title="Tweaks">
+        <TweakSection label="Brand" />
+        <TweakColor
+          label="Primary accent"
+          value={tweaks.accent}
+          onChange={(v) => setTweak('accent', v)}
+          options={['#1f4f79', '#3f92b6', '#1c456b', '#193d5e', '#006a8c']}
+        />
+        <TweakColor
+          label="Bright accent"
+          value={tweaks.accentBright}
+          onChange={(v) => setTweak('accentBright', v)}
+          options={['#3f92b6', '#1f4f79', '#ff6a13', '#65727e']}
+        />
+        <TweakSection label="Layout" />
+        <TweakRadio
+          label="Density"
+          value={tweaks.density}
+          onChange={(v) => setTweak('density', v)}
+          options={[
+            { label: 'Compact',     value: 'compact' },
+            { label: 'Comfortable', value: 'comfortable' },
+            { label: 'Spacious',    value: 'spacious' },
+          ]}
+        />
+        <TweakRadio
+          label="Hero layout"
+          value={tweaks.heroLayout}
+          onChange={(v) => setTweak('heroLayout', v)}
+          options={[
+            { label: 'Stacked', value: 'stacked' },
+            { label: 'Split',   value: 'split' },
+          ]}
+        />
+        <TweakSection label="Navigate" />
+        <TweakSelect
+          label="Jump to page"
+          value={page}
+          onChange={(v) => setPage(v)}
+          options={Object.entries(PAGE_LABELS).map(([v, label]) => ({ value: v, label }))}
+        />
+      </TweaksPanel>
+    </React.Fragment>
+  );
+}
+
+Object.assign(window, { App, SC_TWEAK_DEFAULTS });
+
+
+/* ===== f3b5b68a-40f8-4a71-8b82-be26ac93773c (text/jsx) ===== */
+
+// tweaks-panel.jsx
+// Reusable Tweaks shell + form-control helpers.
+//
+// Owns the host protocol (listens for __activate_edit_mode / __deactivate_edit_mode,
+// posts __edit_mode_available / __edit_mode_set_keys / __edit_mode_dismissed) so
+// individual prototypes don't re-roll it. Ships a consistent set of controls so you
+// don't hand-draw <input type="range">, segmented radios, steppers, etc.
+//
+// Usage (in an HTML file that loads React + Babel):
+//
+//   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+//     "primaryColor": "#D97757",
+//     "palette": ["#D97757", "#29261b", "#f6f4ef"],
+//     "fontSize": 16,
+//     "density": "regular",
+//     "dark": false
+//   }/*EDITMODE-END*/;
+//
+//   function App() {
+//     const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+//     return (
+//       <div style={{ fontSize: t.fontSize, color: t.primaryColor }}>
+//         Hello
+//         <TweaksPanel>
+//           <TweakSection label="Typography" />
+//           <TweakSlider label="Font size" value={t.fontSize} min={10} max={32} unit="px"
+//                        onChange={(v) => setTweak('fontSize', v)} />
+//           <TweakRadio  label="Density" value={t.density}
+//                        options={['compact', 'regular', 'comfy']}
+//                        onChange={(v) => setTweak('density', v)} />
+//           <TweakSection label="Theme" />
+//           <TweakColor  label="Primary" value={t.primaryColor}
+//                        options={['#D97757', '#2A6FDB', '#1F8A5B', '#7A5AE0']}
+//                        onChange={(v) => setTweak('primaryColor', v)} />
+//           <TweakColor  label="Palette" value={t.palette}
+//                        options={[['#D97757', '#29261b', '#f6f4ef'],
+//                                  ['#475569', '#0f172a', '#f1f5f9']]}
+//                        onChange={(v) => setTweak('palette', v)} />
+//           <TweakToggle label="Dark mode" value={t.dark}
+//                        onChange={(v) => setTweak('dark', v)} />
+//         </TweaksPanel>
+//       </div>
+//     );
+//   }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),
+    0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+// ── useTweaks ───────────────────────────────────────────────────────────────
+// Single source of truth for tweak values. setTweak persists via the host
+// (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
+  // useState-style call doesn't write a "[object Object]" key into the persisted
+  // JSON block.
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    // Same-window signal so in-page listeners (deck-stage rail thumbnails)
+    // can react — the parent message only reaches the host, not peers.
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+// ── TweaksPanel ─────────────────────────────────────────────────────────────
+// Floating shell. Registers the protocol listener BEFORE announcing
+// availability — if the announce ran first, the host's activate could land
+// before our handler exists and the toolbar toggle would silently no-op.
+// The close button posts __edit_mode_dismissed so the host's toolbar toggle
+// flips off in lockstep; the host echoes __deactivate_edit_mode back which
+// is what actually hides the panel.
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-omelette-chrome=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">
+          {children}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Layout helpers ──────────────────────────────────────────────────────────
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  // The active value is read by pointer-move handlers attached for the lifetime
+  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  // Segments wrap mid-word once per-segment width runs out. The track is
+  // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
+  // back to a dropdown rather than wrap.
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    // <select> emits strings — map back to the original option value so the
+    // fallback stays type-preserving (numbers, booleans) like the segment path.
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// read on both #111 and #fafafa without per-option configuration. Hex input
+// only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+// TweakColor — curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
+// rest stacked in a sharp column on the right. onChange emits the
+// option in the shape it was passed (string stays string, array stays array).
+// Without options it falls back to the native color input for back-compat.
+function TweakColor({ label, value, options, onChange }) {
+  if (!options || !options.length) {
+    return (
+      <div className="twk-row twk-row-h">
+        <div className="twk-lbl"><span>{label}</span></div>
+        <input type="color" className="twk-swatch" value={value}
+               onChange={(e) => onChange(e.target.value)} />
+      </div>
+    );
+  }
+  // Native <input type=color> emits lowercase hex per the HTML spec, so
+  // compare case-insensitively. String() guards JSON.stringify(undefined),
+  // which returns the primitive undefined (no .toLowerCase).
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    aria-label={colors.join(', ')} title={colors.join(' · ')}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {sup.length > 0 && (
+                <span>
+                  {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
+                </span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+
+
+/* ===== 64248d5a-8ced-41c6-9c0a-32b52c01187b (application/javascript) ===== */
+// SC — Footer. Infused into canvas — gradient fade, no glass box.
+
+function Footer({ setPage, theme }) {
+  const isDark = theme !== 'light';
+  const cols = [
+    { title: 'Practice', links: [
+      { label: 'Services',       go: 'services' },
+      { label: 'Products',       go: 'products' },
+      { label: 'Certifications', go: 'certifications' },
+    ]},
+    { title: 'Company', links: [
+      { label: 'About',   go: 'about' },
+      { label: 'Careers', go: 'careers' },
+      { label: 'Contact', go: 'contact' },
+    ]},
+    { title: 'Resources', links: [
+      { label: 'Case studies', go: 'home' },
+      { label: 'Press kit',    go: 'about' },
+      { label: 'Privacy',      go: 'home' },
+    ]},
+  ];
+
+  const muted      = isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)';
+  const superMuted = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)';
+  const hairline   = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.08)';
+  const divider    = isDark ? 'rgba(255,255,255,0.1)'  : 'rgba(0,0,0,0.1)';
+
+  return (
+    <footer style={{ marginTop: 96, padding: '0 0 0', position: 'relative' }}>
+
+      {/* Gradient fade — previous section melts into footer */}
+      <div style={{
+        height: 120,
+        background: isDark
+          ? 'linear-gradient(to bottom, transparent 0%, #131313 100%)'
+          : 'linear-gradient(to bottom, transparent 0%, #f5f4f0 100%)',
+        pointerEvents: 'none',
+        marginBottom: -1,
+      }} />
+
+      {/* Accent separator — red glow line, fades at edges */}
+      <div style={{
+        height: 1,
+        background: 'linear-gradient(90deg, transparent 0%, rgba(31,79,121,0.55) 25%, rgba(63,146,182,0.7) 50%, rgba(31,79,121,0.55) 75%, transparent 100%)',
+      }} />
+
+      {/* Footer body — transparent, sits on canvas */}
+      <div style={{ background: 'transparent', padding: '52px 0 0' }}
+           data-comment-anchor="a7771c0ab9-div-32-7">
+
+        {/* Row 1: logo + columns */}
+        <div style={{ display: 'flex', gap: 48, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+
+          {/* Brand column */}
+          <div style={{ flex: '1 1 360px' }}>
+            <img
+              src={isDark ? 'assets/sc-logo-light.svg' : 'assets/sc-logo.svg'}
+              alt="Software Consultancy"
+              style={{ height: 80, width: 'auto', display: 'block' }}
+            />
+            <p style={{
+              fontFamily: 'var(--font-sans)', fontSize: 14, lineHeight: 1.6,
+              color: muted, margin: '22px 0 0', maxWidth: 400,
+            }}>The experience you need, the guidance you can trust. An Oracle Fusion partner specialising in implementation, support, and verticals built for the way you actually operate.</p>
+
+            {/* Status badges */}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 20 }}>
+              {[
+                { label: 'Oracle Service Partner', dot: true  },
+                { label: '16 Expertise Areas',     dot: false },
+                { label: 'EMEA · MENA',            dot: false },
+              ].map((b, i) => (
+                <div key={i} style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  fontFamily: 'var(--font-mono)', fontWeight: 700,
+                  fontSize: 9, letterSpacing: '1.5px', textTransform: 'uppercase',
+                  color: b.dot ? 'var(--sc-red)' : superMuted,
+                  padding: '5px 10px',
+                  border: `1px solid ${b.dot ? 'rgba(31,79,121,0.4)' : hairline}`,
+                  borderRadius: 4,
+                }}>
+                  {b.dot && <span style={{
+                    width: 5, height: 5, borderRadius: '50%',
+                    background: 'var(--sc-red)', flexShrink: 0,
+                  }} />}
+                  {b.label}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Link columns */}
+          <div style={{
+            display: 'flex', gap: 56, flex: '1 1 360px',
+            flexWrap: 'wrap', justifyContent: 'flex-end',
+          }}>
+            {cols.map((col) => (
+              <div key={col.title} style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 130 }}>
+                <div style={{
+                  fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+                  letterSpacing: '1.8px', textTransform: 'uppercase', color: 'var(--sc-red)',
+                  marginBottom: 4,
+                }}>{col.title}</div>
+                {col.links.map((l) => (
+                  <FootLink key={l.label} isDark={isDark} onClick={() => setPage(l.go)}>{l.label}</FootLink>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom status bar */}
+        <div style={{
+          display: 'flex', gap: 18, flexWrap: 'wrap', alignItems: 'center',
+          borderTop: `1px solid ${hairline}`,
+          marginTop: 48, padding: '14px 0',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="sc-pulse-dot" style={{ width: 5, height: 5 }} />
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '1.5px',
+              textTransform: 'uppercase', color: superMuted,
+            }}>Systems operational</span>
+          </div>
+          <span style={{ width: 1, height: 12, background: divider }} />
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '1.5px',
+            textTransform: 'uppercase', color: superMuted,
+          }}>© Software Consultancy · Est. 2009</span>
+          <span style={{ flex: 1 }} />
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '1.5px',
+            textTransform: 'uppercase', color: superMuted,
+          }}>Oracle PartnerNetwork · 139 consultants · 16 expertise badges</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FootLink({ children, onClick, isDark }) {
+  const [hover, setHover] = React.useState(false);
+  return (
+    <a
+      href="#"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={(e) => { e.preventDefault(); onClick && onClick(); }}
+      style={{
+        fontFamily: 'var(--font-sans)', fontSize: 13,
+        color: hover ? 'var(--sc-red-bright)' : (isDark ? 'rgba(255,255,255,0.55)' : 'rgba(0,0,0,0.5)'),
+        textDecoration: 'none', transition: 'color 150ms ease',
+      }}
+    >{children}</a>
+  );
+}
+
+Object.assign(window, { Footer });
+
+
+/* ===== 1a71e50a-1b2f-4556-b587-13eea94f7c11 (application/javascript) ===== */
+// SC — Services page
+
+const SERVICE_AREAS = [
+  {
+    id: 'implementation',
+    code: '01',
+    variant: 'red',
+    title: 'Implementation',
+    standfirst: 'Oracle Fusion rollouts that ship on the calendar week, not the calendar quarter.',
+    deck: 'Greenfield Fusion implementations across ERP, HCM, SCM, CX, and OCI. We bring a delivery playbook, a tested set of accelerators, and senior consultants who have already shipped the workstream you are about to run.',
+    bullets: [
+      'Fit-gap analysis and target-state design in weeks, not months',
+      'Pre-built configuration packs for Financials, HCM, SCM, Payroll',
+      'Data migration tooling: ledger balances, employee master, item master, open AR/AP',
+      'Cutover rehearsals — typically 3 to 5 before go-live',
+      'Hypercare with a fixed exit date and a written knowledge transfer',
+    ],
+    icon: Layers,
+  },
+  {
+    id: 'support',
+    code: '02',
+    variant: 'slate',
+    title: 'Application Support',
+    standfirst: 'Managed support that pays for itself by Q2.',
+    deck: 'Tier-1 through Tier-4 application support for Oracle Fusion. SLAs aligned to the work, a named delivery lead, and an improvement backlog that gets shipped — not just logged.',
+    bullets: [
+      'Quarterly Fusion patching, regression-tested against your live config',
+      'Functional + technical tickets from a single team',
+      'OIC integration monitoring and recovery on a 24/5 watch',
+      'Monthly release review against the Oracle roadmap',
+      'A continuous improvement backlog burned down by named owners',
+    ],
+    icon: Cog,
+  },
+  {
+    id: 'verticals',
+    code: '03',
+    variant: 'redDeep',
+    title: 'Verticals & Portals',
+    standfirst: 'Industry-shaped products that ride on Fusion instead of working around it.',
+    deck: 'Where standard Fusion stops, our verticals start. We build portals and extensions for the way your industry actually moves — and we run them as proper products, with releases, support, and a roadmap.',
+    bullets: [
+      'ZATCA II e-invoicing portal — Phase-2 compliant for KSA',
+      'Franchise Portal — outlet onboarding, royalties, reporting',
+      'B2B E-Commerce Portal — customer-specific catalogues priced from Fusion',
+      'Government-platform integration repository (ZATCA, GOSI, MOL)',
+      'Custom OAF / VBCS / APEX extensions where Fusion needs more reach',
+    ],
+    icon: Box,
+  },
+  {
+    id: 'automation',
+    code: '04',
+    variant: 'steel',
+    title: 'Automation & Analytics',
+    standfirst: 'A library of dashboards, integrations, and OIC flows that ship on day one.',
+    deck: 'You should not have to pay us to rebuild what we have already built eleven times. Our accelerators repository covers the integrations, reports, and automations that show up on every Fusion engagement.',
+    bullets: [
+      'Pre-built dashboards across Finance, HCM, Procurement, Inventory',
+      'OIC integration patterns — REST, SOAP, JMS, file-based, event-driven',
+      'OTBI / BI Publisher report library, parameterised and version-controlled',
+      'Automated reconciliations: bank, intercompany, GR/IR, AP/AR clearing',
+      'AI-assisted ticket triage and root-cause classification (pilot)',
+    ],
+    icon: Zap,
+  },
+];
+
+function ServicesPage({ setPage }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <Hero
+        kicker="Services · Practice areas"
+        headline="Four ways we plug in. "
+        accent="Pick any."
+        deck="Most engagements start with one practice area and grow into two. The shape of the work is yours — we bring the people, the playbook, and the artefacts."
+      >
+        <PrimaryButton onClick={() => setPage('contact')}>Talk to a partner <ArrowRight size={14} stroke={2} /></PrimaryButton>
+        <OutlinedButton color="white" onClick={() => setPage('products')}>See our products</OutlinedButton>
+      </Hero>
+
+      {/* Anchor index */}
+      <ProofStrip items={SERVICE_AREAS.map(s => s.title)} />
+
+      {/* Service blocks */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        {SERVICE_AREAS.map((s, i) => (
+          <ServiceBlock key={s.id} service={s} flip={i % 2 === 1} />
+        ))}
+      </div>
+
+      {/* How we engage */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <SectionHead
+          kicker="How we engage"
+          title="The engagement, in five rehearsed beats."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16 }}>
+          {[
+            { n: '01', title: 'Discovery', deck: 'Two-week paid discovery. Stakeholders, current-state, target-state, the shape of the work.' },
+            { n: '02', title: 'Design',    deck: 'A written design document — fit/gap, integrations, data model, cutover, RACI.' },
+            { n: '03', title: 'Build',     deck: 'Config, code, OIC, reports. Two-week sprints with a working artefact each Friday.' },
+            { n: '04', title: 'Cutover',   deck: 'Three to five rehearsals. One go-live. Variance reported in the first standup.' },
+            { n: '05', title: 'Hypercare', deck: 'Fixed-length hypercare with a written exit and a written handover to support.' },
+          ].map(p => (
+            <QuietCard key={p.n}>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 64,
+                lineHeight: 0.9, color: 'var(--sc-red)', marginBottom: 12,
+              }}>{p.n}</div>
+              <h4 style={{
+                fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 20,
+                lineHeight: 1.1, color: '#fff', margin: '0 0 10px',
+              }}>{p.title}</h4>
+              <p style={{ fontSize: 13, lineHeight: 1.55, color: '#949494', margin: 0 }}>{p.deck}</p>
+            </QuietCard>
+          ))}
+        </div>
+      </section>
+
+      <FeatureTile
+        variant="red"
+        kicker="Engagement models"
+        headline="Fixed-price, T&M, or embedded — your call."
+        deck="We run all three, depending on where you are. Most clients start with a fixed-price discovery, then move into a T&M or embedded mode once the shape of the work is honest."
+        cta="Discuss an engagement"
+        onCtaClick={() => setPage('contact')}
+      />
+    </div>
+  );
+}
+
+function ServiceBlock({ service, flip }) {
+  const palette = {
+    red:     { bg: 'var(--sc-red)',         fg: '#fff', mark: '#fff' },
+    redDeep: { bg: 'var(--sc-red-deep)',    fg: '#fff', mark: 'var(--sc-red-bright)' },
+    slate:   { bg: 'var(--sc-steel-800)',   fg: '#fff', mark: 'var(--sc-red)' },
+    steel:   { bg: 'var(--sc-steel-500)',   fg: '#fff', mark: '#fff' },
+  };
+  const p = palette[service.variant];
+  return (
+    <article style={{
+      background: p.bg, color: p.fg, borderRadius: 24, padding: '48px 48px 44px',
+      display: 'grid',
+      gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+      gap: 48,
+      direction: flip ? 'rtl' : 'ltr',
+    }}>
+      <div style={{ direction: 'ltr', display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{
+            width: 56, height: 56, borderRadius: 12,
+            display: 'grid', placeItems: 'center',
+            background: 'rgba(255,255,255,0.12)',
+            border: '1px solid rgba(255,255,255,0.25)',
+          }}>
+            <service.icon size={28} stroke={2} color={p.fg} />
+          </div>
+          <div>
+            <div style={{
+              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+              letterSpacing: '1.9px', textTransform: 'uppercase', color: p.fg, opacity: 0.75,
+            }}>{service.code} · Practice</div>
+            <h2 style={{
+              fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 28,
+              lineHeight: 1, color: p.fg, margin: '6px 0 0',
+            }}>{service.title}</h2>
+          </div>
+        </div>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(36px, 4.2vw, 56px)',
+          lineHeight: 'var(--display-leading)', letterSpacing: '0.3px',
+          color: p.fg, margin: 0, maxWidth: '15ch',
+        }}>{service.standfirst}</h3>
+        <p style={{
+          fontFamily: 'var(--font-sans)', fontWeight: 500, fontSize: 16,
+          lineHeight: 1.6, color: p.fg, opacity: 0.88, margin: 0, maxWidth: 560,
+        }}>{service.deck}</p>
+      </div>
+      <div style={{
+        direction: 'ltr',
+        background: 'rgba(0,0,0,0.18)',
+        borderRadius: 16,
+        padding: '28px 32px',
+        display: 'flex', flexDirection: 'column', gap: 14,
+      }}>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+          letterSpacing: '1.8px', textTransform: 'uppercase',
+          color: p.mark, opacity: 0.9, marginBottom: 4,
+        }}>What's included</div>
+        {service.bullets.map((b, i) => (
+          <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+            <div style={{
+              minWidth: 22, height: 22, borderRadius: 6,
+              background: p.mark,
+              display: 'grid', placeItems: 'center', marginTop: 1,
+            }}>
+              <Check size={14} stroke={2.5} color={p.bg === '#fff' ? '#fff' : (p.mark === '#fff' ? p.bg : '#fff')} />
+            </div>
+            <div style={{
+              fontFamily: 'var(--font-sans)', fontSize: 15, lineHeight: 1.55,
+              color: p.fg, opacity: 0.95,
+            }}>{b}</div>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+Object.assign(window, { ServicesPage });
+
+
+/* ===== e8917889-dc09-46d2-bb57-35dd1d54e950 (application/javascript) ===== */
+// SC — About page
+
+const LEADERSHIP = [
+  { name: 'Ibrahim Younis',    role: 'Chief Executive Officer',         division: 'Executive', },
+  { name: 'Ibrahim Alwahidi',  role: 'Chief Operating Officer',         division: 'Executive', },
+  { name: 'Mohammad Kilani',   role: 'ERP Director',                    division: 'Cloud Delivery', },
+  { name: 'Abdullah Al Otaibi',role: 'Technical & CX Director',         division: 'Cloud Delivery', },
+  { name: 'Momen Rababa',      role: 'HCM Director',                    division: 'Cloud Delivery', },
+  { name: 'Sodod Abu Khater',  role: 'QA, Audit & Client Adoption Lead',division: 'Business Excellence', },
+  { name: 'Sadeq Laqa',        role: 'Sales Director',                  division: 'Business Excellence', },
+  { name: 'Tareq Laqa',        role: 'PMO Director',                    division: 'Business Excellence', },
+];
+
+const TEAM_LEADERS = [
+  { name: 'Anas Abaza',          role: 'Sales Support Team Leader' },
+  { name: 'Manal Nofal',         role: 'Accounting & HR Team Leader' },
+  { name: 'Malik Yassen',        role: 'SCM Team Leader' },
+  { name: 'Isaac Akhras',        role: 'ERP Team Leader' },
+  { name: 'Ibrahim Bani Saleem', role: 'Tech. Operations Lead' },
+  { name: 'Ramiz Aljouni',       role: 'Reporting Team Leader' },
+  { name: 'Ahmad AlRiahna',      role: 'Tech Support Team Leader' },
+  { name: 'Saeed Shannah',       role: 'HCM Team Leader' },
+  { name: 'Ibrahim Taqiedin',    role: 'HCM Team Leader' },
+  { name: 'Mahmoud Alamart',     role: 'HCM Support Team Leader' },
+  { name: 'Zaid Rahall',         role: 'QA & Client Adoption Officer' },
+];
+
+function AboutPage({ setPage }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <Hero
+        kicker="About · Established 2009"
+        headline="A consultancy built like an "
+        accent="consulting team."
+        deck="Software Consultancy is a regional Oracle Fusion partner. We've spent fifteen years on Oracle Cloud deliveries, growing the bench one senior consultant at a time, organised around the practice areas our clients actually buy."
+      >
+        <PrimaryButton onClick={() => setPage('contact')}>Talk to the partners <ArrowRight size={14} stroke={2} /></PrimaryButton>
+      </Hero>
+
+      {/* Founding story split */}
+      <section style={{ display: 'grid', gridTemplateColumns: '1.05fr 1fr', gap: 32, alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <Kicker color="red">Our position</Kicker>
+          <h2 style={{
+            fontFamily: 'var(--font-display)', fontWeight: 900,
+            fontSize: 'clamp(40px, 5vw, 72px)', lineHeight: 0.95, letterSpacing: '0.3px',
+            color: '#fff', margin: 0, maxWidth: '14ch',
+          }}>The experience you need, the guidance you can trust.</h2>
+          <p style={{
+            fontFamily: 'var(--font-serif)', fontStyle: 'italic',
+            fontSize: 20, lineHeight: 1.4, color: '#e9e9e9', margin: 0, maxWidth: 580,
+          }}>That's the slogan. The work behind it is fifteen years of Oracle Cloud delivery, an Oracle Service Partner badge against sixteen expertise areas, and a 139-consultant bench that's been built one senior consultant at a time.</p>
+          <p style={{
+            fontFamily: 'var(--font-sans)', fontSize: 16, lineHeight: 1.6, color: '#e9e9e9', margin: 0, maxWidth: 580,
+          }}>SC was founded in 2009 to do one thing well — implement and run Oracle Fusion for clients in the EMEA / Middle East market. The shape of the firm follows from that. We're a partner, not a reseller; an consulting team, not a sales floor.</p>
+        </div>
+        <ImagePlaceholder
+          label="Office photo · 4:3"
+          aspect="4 / 3"
+          caption="HQ · Cloud Delivery Division floor"
+        />
+      </section>
+
+      {/* Principles */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Operating principles"
+          title="Five lines we hold the firm to."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+          {[
+            { n: '01', title: 'Senior-weighted', deck: 'A consultant\'s first project is staffed alongside a senior. Always.' },
+            { n: '02', title: 'Written plans',   deck: 'Every engagement has a written design and a written go-live plan.' },
+            { n: '03', title: 'Cutovers rehearsed', deck: 'Three to five rehearsals before any go-live. No exceptions.' },
+            { n: '04', title: 'No blame post-mortems', deck: 'Every variance ends in a written postmortem and a guardrail.' },
+            { n: '05', title: 'Code-reviewed', deck: 'Configs, OIC, reports, personalisations — all reviewed and version-controlled.' },
+          ].map(p => (
+            <QuietCard key={p.n}>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 44,
+                lineHeight: 0.9, color: 'var(--sc-red)', marginBottom: 12,
+              }}>{p.n}</div>
+              <h4 style={{
+                fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 16,
+                lineHeight: 1.15, color: '#fff', margin: '0 0 8px',
+              }}>{p.title}</h4>
+              <p style={{ fontSize: 13, lineHeight: 1.5, color: '#949494', margin: 0 }}>{p.deck}</p>
+            </QuietCard>
+          ))}
+        </div>
+      </section>
+
+      {/* Org chart */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Organisation · April 2026"
+          title="Two divisions. Eight directors."
+          deck="The 2026 restructure split the firm into Cloud Delivery and Business Excellence — one ships client engagements, the other builds the system that lets the first one ship."
+        />
+        <OrgChart />
+      </section>
+
+      {/* Leadership */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SectionHead
+          kicker="Leadership"
+          title="The team that signs the work."
+        />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          {LEADERSHIP.map(p => <PersonCard key={p.name} person={p} />)}
+        </div>
+      </section>
+
+      {/* Team leads */}
+      <section style={{
+        background: 'rgba(255,255,255,0.04)',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 16, padding: '40px 48px',
+      }}>
+        <Kicker color="red">Team leaders</Kicker>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontWeight: 900,
+          fontSize: 'clamp(34px, 4vw, 56px)', lineHeight: 0.95,
+          color: '#fff', margin: '20px 0 28px',
+        }}>The people who run the day.</h3>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18,
+        }}>
+          {TEAM_LEADERS.map(p => (
+            <div key={p.name} style={{
+              display: 'flex', alignItems: 'center', gap: 14,
+              padding: '12px 0', borderBottom: '1px solid rgba(255,255,255,0.07)',
+            }}>
+              <Avatar name={p.name} />
+              <div>
+                <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 14, color: '#fff' }}>{p.name}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 11, letterSpacing: '1.1px', textTransform: 'uppercase', color: 'var(--sc-red)', marginTop: 2 }}>{p.role}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <FeatureTile
+        variant="red"
+        kicker="Want the full deck?"
+        headline="Capability statement, on request."
+        deck="A 24-page document covering our delivery methodology, sample engagements, references, and the named consultants on each practice area's bench. Sent within a business day."
+        cta="Request the deck"
+        onCtaClick={() => setPage('contact')}
+      />
+    </div>
+  );
+}
+
+function PersonCard({ person }) {
+  return (
+    <div style={{
+      background: '#131313',
+      borderRadius: 20,
+      boxShadow: 'inset 0 0 0 1px var(--sc-steel-700)',
+      padding: '24px',
+      display: 'flex', flexDirection: 'column', gap: 14,
+    }}>
+      <Avatar name={person.name} size={56} large />
+      <div>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+          letterSpacing: '1.5px', textTransform: 'uppercase', color: 'var(--sc-red)',
+        }}>{person.division}</div>
+        <div style={{
+          fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 18,
+          color: '#fff', marginTop: 6, lineHeight: 1.2,
+        }}>{person.name}</div>
+        <div style={{
+          fontFamily: 'var(--font-sans)', fontSize: 13, color: '#949494', marginTop: 4,
+        }}>{person.role}</div>
+      </div>
+    </div>
+  );
+}
+
+function Avatar({ name, size = 40, large }) {
+  const initials = name.split(' ').slice(0, 2).map(n => n[0]).join('');
+  return (
+    <div style={{
+      width: size, height: size,
+      borderRadius: '50%',
+      background: large
+        ? 'linear-gradient(135deg, var(--sc-red) 0%, var(--sc-red-deep) 100%)'
+        : 'var(--sc-steel-100)',
+      color: large ? '#fff' : '#131313',
+      display: 'grid', placeItems: 'center',
+      fontFamily: 'var(--font-mono)', fontWeight: 700,
+      fontSize: large ? 18 : 13,
+      letterSpacing: '1px',
+      flexShrink: 0,
+    }}>{initials}</div>
+  );
+}
+
+// Simplified visual org chart — two divisions branching off the CEO
+function OrgChart() {
+  return (
+    <div style={{
+      background: 'var(--sc-steel-800)', borderRadius: 24, padding: '40px 48px',
+      display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 32,
+    }}>
+      {/* CEO */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <OrgNode name="Ibrahim Younis" role="Chief Executive Officer" tone="red" />
+      </div>
+      <Connector />
+      {/* COO */}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <OrgNode name="Ibrahim Alwahidi" role="Chief Operating Officer" tone="red" />
+      </div>
+      <Connector />
+      {/* Two divisions */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <Division
+          title="Cloud Delivery Division"
+          n={113}
+          members={[
+            { name: 'Mohammad Kilani', role: 'ERP Director · 36 consultants' },
+            { name: 'Abdullah Al Otaibi', role: 'Technical & CX Director · 42 consultants' },
+            { name: 'Momen Rababa', role: 'HCM Director · 35 consultants' },
+          ]}
+        />
+        <Division
+          title="Business Excellence Division"
+          n={26}
+          members={[
+            { name: 'Sadeq Laqa', role: 'Sales Director' },
+            { name: 'Tareq Laqa', role: 'PMO Director' },
+            { name: 'Sodod Abu Khater', role: 'QA & Adoption Lead' },
+          ]}
+        />
+      </div>
+    </div>
+  );
+}
+
+function OrgNode({ name, role, tone = 'slate' }) {
+  const bg = tone === 'red' ? 'var(--sc-red)' : 'rgba(255,255,255,0.05)';
+  return (
+    <div style={{
+      background: bg, color: '#fff',
+      backdropFilter: tone !== 'red' ? 'blur(12px)' : 'none',
+      WebkitBackdropFilter: tone !== 'red' ? 'blur(12px)' : 'none',
+      borderRadius: 10, padding: '14px 22px',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      minWidth: 220,
+      border: tone === 'red' ? 'none' : '1px solid rgba(255,255,255,0.1)',
+    }}>
+      <div style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 15 }}>{name}</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.3px', textTransform: 'uppercase', opacity: 0.85, marginTop: 2 }}>{role}</div>
+    </div>
+  );
+}
+
+function Connector() {
+  return (
+    <div style={{
+      width: 1, height: 24, background: 'var(--sc-steel-500)',
+      alignSelf: 'center',
+    }} />
+  );
+}
+
+function Division({ title, n, members }) {
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.04)',
+      backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: 12,
+      padding: '24px 28px',
+      display: 'flex', flexDirection: 'column', gap: 16,
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <div style={{
+          fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 18, color: '#fff',
+        }}>{title}</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <span className="sc-tnum" style={{
+            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28,
+            color: 'var(--sc-red)',
+          }}>{n}</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.3px', textTransform: 'uppercase', color: '#949494' }}>consultants</span>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {members.map(m => (
+          <div key={m.name} style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '10px 14px',
+            background: 'var(--sc-steel-800)',
+            borderRadius: 8,
+          }}>
+            <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 13, color: '#fff' }}>{m.name}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.1px', textTransform: 'uppercase', color: '#e9e9e9' }}>{m.role}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { AboutPage });
+
+
+/* ===== 397ec4e4-c0e7-46ad-a1fc-bc2ff9e87bf6 (application/javascript) ===== */
+// SC — Home page (tech redesign)
+
+// ── Animated stat counter ──────────────────────────────────────
+function StatCounter({ value, suffix = '', label, kicker, divider }) {
+  const [count, setCount] = React.useState(value === 0 ? 0 : null);
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (value === 0) {setCount(0);return;}
+    let mounted = true;
+    // Run unconditionally after a short delay — no observer, no cleanup race
+    const id = setTimeout(() => {
+      if (!mounted) return;
+      const dur = 1600;
+      const t0 = performance.now();
+      const tick = (now) => {
+        if (!mounted) return;
+        const p = Math.min((now - t0) / dur, 1);
+        const e = 1 - Math.pow(1 - p, 3);
+        setCount(Math.floor(e * value));
+        if (p < 1) requestAnimationFrame(tick);else
+        setCount(value);
+      };
+      requestAnimationFrame(tick);
+    }, 400);
+    return () => {mounted = false;clearTimeout(id);};
+  }, [value]);
+
+  return (
+    <div ref={ref} style={{
+      display: 'flex', flexDirection: 'column', gap: 10,
+      borderRight: divider ? '1px solid rgba(255,255,255,0.07)' : 'none',
+      paddingRight: divider ? 32 : 0
+    }}>
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+        letterSpacing: '1.8px', textTransform: 'uppercase', color: 'var(--sc-red)'
+      }}>{kicker}</div>
+      <div className="sc-tnum" style={{
+        fontFamily: 'var(--font-display)', fontWeight: 900,
+        fontSize: 'clamp(52px, 6vw, 88px)', lineHeight: 0.92,
+        color: '#fff', letterSpacing: '-1px'
+      }}>{count !== null ? count : value}{suffix}</div>
+      <div style={{
+        fontFamily: 'var(--font-sans)', fontSize: 14, lineHeight: 1.45,
+        color: 'rgba(255,255,255,0.45)', maxWidth: 200
+      }}>{label}</div>
+    </div>);
+
+}
+
+// ── Service card ───────────────────────────────────────────────
+function ServiceCard({ icon: Icon, num, kicker, title, deck, tags, onClick }) {
+  const [hover, setHover] = React.useState(false);
+  return (
+    <article
+      className="sc-service-card"
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+          letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--sc-red)'
+        }}>{num}</span>
+        <Icon size={20} stroke={1.5} style={{
+          color: hover ? 'var(--sc-red)' : 'rgba(255,255,255,0.35)',
+          transition: 'color 200ms ease'
+        }} />
+      </div>
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+        letterSpacing: '2px', textTransform: 'uppercase', color: '#fff'
+      }}>{kicker}</div>
+      <p style={{
+        fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 18,
+        lineHeight: 1.25, color: '#fff', margin: 0, maxWidth: '20ch'
+      }}>{title}</p>
+      <p style={{
+        fontFamily: 'var(--font-sans)', fontSize: 13, lineHeight: 1.65,
+        color: 'rgba(255,255,255,0.5)', margin: 0, flex: 1
+      }}>{deck}</p>
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.5px',
+        textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)',
+        paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)',
+        marginTop: 4
+      }}>{tags}</div>
+    </article>);
+
+}
+
+// ── Work article card ──────────────────────────────────────────
+function WorkCard({ timestamp, tag, kicker, headline, deck, accent }) {
+  return (
+    <article className="sc-work-card" style={{
+      background: accent ? 'rgba(31,79,121,0.10)' : 'rgba(255,255,255,0.03)',
+      position: 'relative', overflow: 'hidden'
+    }}>
+      {accent &&
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0,
+        height: 2, background: 'var(--sc-red)'
+      }} />
+      }
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.5px',
+        textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)'
+      }}>{timestamp}</div>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '1.5px',
+          textTransform: 'uppercase',
+          color: accent ? 'var(--sc-red)' : 'rgba(255,255,255,0.55)',
+          padding: '3px 7px',
+          border: `1px solid ${accent ? 'rgba(31,79,121,0.45)' : 'rgba(255,255,255,0.12)'}`,
+          borderRadius: 3
+        }}>{tag}</span>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '1.5px',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)'
+        }}>{kicker}</span>
+      </div>
+      <h3 style={{
+        fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 18,
+        lineHeight: 1.25, color: '#fff', margin: 0
+      }}>{headline}</h3>
+      <p style={{
+        fontFamily: 'var(--font-sans)', fontSize: 13, lineHeight: 1.65,
+        color: 'rgba(255,255,255,0.48)', margin: 0
+      }}>{deck}</p>
+    </article>);
+
+}
+
+// ── Hero data console (right panel) ───────────────────────────
+function HeroConsole() {
+  const rows = [
+  { label: 'Consultants', value: '139', badge: 'ACTIVE' },
+  { label: 'Cert. areas', value: '016', badge: 'CERTIFIED' },
+  { label: 'Years active', value: '015', badge: 'EST.2009' },
+  { label: 'Failed go-lives', value: '000', badge: 'CLEAR' }];
+
+  return (
+    <div style={{
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderTop: '1px solid rgba(31,79,121,0.45)',
+      borderRadius: 10, overflow: 'hidden',
+      backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)',
+      background: 'rgba(10,10,10,0.65)',
+      alignSelf: 'flex-start'
+    }}>
+      {/* Console header */}
+      <div style={{
+        padding: '11px 18px',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(255,255,255,0.03)',
+        display: 'flex', alignItems: 'center', gap: 9
+      }}>
+        <span className="sc-pulse-dot" />
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9,
+          letterSpacing: '1.8px', textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.55)'
+        }}>ORACLE STATUS — LIVE</span>
+      </div>
+
+      {/* Data rows */}
+      {rows.map((r, i) =>
+      <div key={i} style={{
+        padding: '14px 18px',
+        borderBottom: i < rows.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        gap: 24
+      }}>
+          <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '1.5px',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)'
+        }}>{r.label}</span>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <span style={{
+            fontFamily: 'var(--font-mono)', fontWeight: 700,
+            fontSize: 22, color: '#fff', letterSpacing: '-0.5px'
+          }}>{r.value}</span>
+            <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '1.5px',
+            textTransform: 'uppercase', color: 'var(--sc-red)',
+            padding: '2px 6px',
+            border: '1px solid rgba(31,79,121,0.35)', borderRadius: 3
+          }}>{r.badge}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Console footer */}
+      <div style={{
+        padding: '9px 18px',
+        background: 'rgba(31,79,121,0.07)',
+        borderTop: '1px solid rgba(31,79,121,0.15)'
+      }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '1.5px',
+          textTransform: 'uppercase', color: 'rgba(31,79,121,0.65)'
+        }}>Oracle PartnerNetwork · EMEA · MENA · 2026</span>
+      </div>
+    </div>);
+
+}
+
+// ── Main page ──────────────────────────────────────────────────
+function HomePage({ setPage }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+
+      {/* ── HERO ──────────────────────────────────────────── */}
+      <section style={{
+        minHeight: 'calc(100vh - 140px)',
+        display: 'grid',
+        gridTemplateColumns: 'minmax(0, 1.15fr) minmax(0, 0.85fr)',
+        gap: 56,
+        alignItems: 'center',
+        padding: '72px 0 64px',
+        position: 'relative',
+      }}>
+        {/* Left — headline + CTAs */}
+        <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
+          <div>
+            <Kicker color="red">Oracle Fusion Partner · Implementation · Support · Verticals</Kicker>
+          </div>
+          <h1 className="sc-hero-h1" style={{
+            fontFamily: 'var(--font-display)', fontWeight: 900,
+            fontSize: 'clamp(56px, 7.5vw, 112px)',
+            letterSpacing: '0.5px', color: '#fff',
+            margin: '28px 0 0', maxWidth: '15ch'
+          }}>
+            The experience<br />you need,<br />
+            the guidance{' '}
+            <span className="sc-glow" style={{ color: 'var(--sc-red)' }}>you can trust.</span>
+          </h1>
+          <p style={{
+            fontFamily: 'var(--font-serif)', fontStyle: 'italic',
+            fontSize: 20, lineHeight: 1.35, letterSpacing: '-0.16px',
+            color: '#e9e9e9', margin: '40px 0 0', maxWidth: 560
+          }}>
+            We implement, support, and extend Oracle Fusion Cloud — and build the vertical portals and automations our clients use to actually run their business.
+          </p>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 36 }}>
+            <PrimaryButton onClick={() => setPage('services')}>
+              Explore our services <ArrowRight size={14} stroke={2} />
+            </PrimaryButton>
+            <OutlinedButton color="white" onClick={() => setPage('contact')}>
+              Book a discovery call
+            </OutlinedButton>
+          </div>
+
+          {/* Proof strip */}
+          <div style={{
+            display: 'flex', flexWrap: 'wrap', gap: 0,
+            marginTop: 64, paddingTop: 24,
+            borderTop: '1px solid rgba(255,255,255,0.07)'
+          }}>
+            {[
+            ['Oracle Service Partner', true],
+            ['16 Expertise Areas', false],
+            ['139 Consultants', false],
+            ['EMEA · MENA', false],
+            ['Est. 2009', false]].
+            map(([text, accent], i) =>
+            <div key={i} style={{
+              fontFamily: 'var(--font-mono)', fontWeight: 700,
+              fontSize: 10, letterSpacing: '1.8px', textTransform: 'uppercase',
+              color: accent ? 'var(--sc-red)' : 'rgba(255,255,255,0.32)',
+              paddingRight: 28, paddingBottom: 6,
+              borderRight: i < 4 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+              marginRight: 28
+            }}>{text}</div>
+            )}
+          </div>
+        </div>
+
+        {/* Right — console panel */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24, position: 'relative', zIndex: 1 }} data-comment-anchor="9ef0572bac-div-293-9">
+          <HeroConsole />
+          <ImagePlaceholder label="Hero · 4:3" aspect="4 / 3" caption="Delivery review · Cloud Delivery Division" />
+        </div>
+      </section>
+
+      {/* ── LOGO MARQUEE ──────────────────────────────────── */}
+      <LogoMarquee
+        kicker="Trusted on Oracle Fusion rollouts"
+        heading="Delivering Oracle Excellence. Proven Across Markets."
+        speed={46} />
+      
+
+      {/* ── SERVICES ──────────────────────────────────────── */}
+      <section style={{ padding: '96px 0 48px' }}>
+        <SectionHead
+          kicker="Practice areas"
+          title="Four ways we plug in."
+          deck="Whether you're rolling out Fusion for the first time or trying to make the one you already have work harder, the engagement is shaped by where you actually need us." />
+        
+        <div className="sc-service-grid sc-bracket" style={{ marginTop: 48, background: 'rgba(255,255,255,0.02)' }}>
+          {[
+          { icon: Layers, num: '01', kicker: 'Implementation',
+            title: 'Fusion rollouts that ship on the calendar week, not the calendar quarter.',
+            deck: 'ERP, HCM, SCM, CX, OCI. We bring playbooks, accelerators, and a delivery cadence built for go-live in months, not years.',
+            tags: 'ERP · HCM · SCM · CX · OCI' },
+          { icon: Cog, num: '02', kicker: 'Support',
+            title: 'Managed Fusion support, with consultants who answer in your stack-trace.',
+            deck: 'Tier-1 to Tier-4 application support, SLAs aligned to the work, and a permanent improvement backlog so the system gets better as it ages.',
+            tags: 'T1–T4 · SLA · Continuous' },
+          { icon: Box, num: '03', kicker: 'Verticals',
+            title: 'Portals and extensions that fit the way your industry actually moves.',
+            deck: 'ZATCA II, Franchise, B2B Commerce — purpose-built portals layered on Fusion so the business logic lives where the data already is.',
+            tags: 'ZATCA II · Franchise · B2B' },
+          { icon: Zap, num: '04', kicker: 'Automation',
+            title: 'Repositories of integrations, dashboards, and bots that ship on day one.',
+            deck: 'Prebuilt integrations to government platforms, a library of analytics dashboards, and OIC flows that turn weeks of plumbing into hours.',
+            tags: 'OIC · Dashboards · Bots' }].
+          map((s, i) =>
+          <ServiceCard key={i} {...s} onClick={() => setPage('services')} />
+          )}
+        </div>
+      </section>
+
+      {/* ── STATS ─────────────────────────────────────────── */}
+      <section style={{ padding: '48px 0' }}>
+        <div className="sc-glass sc-bracket" style={{ borderRadius: 16, padding: '52px 60px' }}>
+          <Kicker color="red">SC by the numbers · As of April 2026</Kicker>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: 32, marginTop: 44
+          }}>
+            <StatCounter value={139} suffix="" label="Consultants across 4 practice areas" kicker="Headcount" divider />
+            <StatCounter value={16} suffix="" label="Oracle Service Partner expertise badges" kicker="Certifications" divider />
+            <StatCounter value={15} suffix="y" label="Of Oracle Cloud delivery, since 2009" kicker="In market" divider />
+            <StatCounter value={0} suffix="" label="Failed go-lives in the last 24 months" kicker="On time, on plan" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── RECENT WORK ───────────────────────────────────── */}
+      <section style={{ padding: '48px 0' }}>
+        <SectionHead
+          kicker="Recent work"
+          title="Cases from the delivery floor."
+          deck="A handful of recent engagements — written like memos, not testimonials." />
+        
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 16, marginTop: 40
+        }}>
+          <WorkCard
+            timestamp="MAR 14 · 09:41"
+            tag="Case study"
+            kicker="ZATCA II PORTAL · 8 WEEKS"
+            headline="A KSA retail group, on a Phase-2 e-invoicing deadline, with 14 ERPs feeding one Fusion instance."
+            deck="We connected the back-office tax line of the business to ZATCA in eight weeks. The portal we shipped clears 1.2M invoices a month and didn't move when the regulation moved either." />
+          
+          <WorkCard
+            timestamp="FEB 22 · 14:22"
+            tag="Post-mortem"
+            kicker="HCM CUTOVER · 12 WEEKS"
+            headline="A 9,000-employee payroll cutover, told in five rehearsals and one go-live."
+            deck="We ran payroll in parallel for two cycles before flipping the switch. The variance on the cutover run was four payslips out of 9,143."
+            accent />
+          
+          <WorkCard
+            timestamp="JAN 18 · 11:03"
+            tag="Memo"
+            kicker="OIC INTEGRATIONS"
+            headline="Why we keep the integration repo in the same git history as the customisations."
+            deck="How SC ships Fusion integrations — version-controlled, code-reviewed, and merged in the same PR as the page personalisation that depends on them." />
+          
+        </div>
+      </section>
+
+      {/* ── CTA ───────────────────────────────────────────── */}
+      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, padding: '48px 0 0' }}>
+        <FeatureTile
+          variant="red"
+          kicker="We're hiring"
+          headline="39 open roles, mostly senior."
+          deck="ERP leads, HCM consultants, OIC integration consultants, and a Business Excellence team building accelerators full-time."
+          cta="See open roles"
+          onCtaClick={() => setPage('careers')} />
+        
+        <FeatureTile
+          variant="slate"
+          kicker="Talk to us"
+          headline="A 30-minute call beats a 30-page RFP."
+          deck="Tell us where the rollout's stuck. If we can help, we'll say how. If we can't, we'll point to someone who can."
+          cta="Book a call"
+          onCtaClick={() => setPage('contact')} />
+        
+      </section>
+
+    </div>);
+
+}
+
+Object.assign(window, { HomePage });
+
+/* ===== 8322f386-d92d-43cc-889c-2561696086f6 (application/javascript) ===== */
+// SC — Certifications page
+
+const CERTIFICATIONS = [
+  { id: 'erp-fin',     name: 'Oracle ERP Financial Cloud',                pillar: 'ERP'        },
+  { id: 'scm-proc',    name: 'Oracle SCM Procurement Cloud',              pillar: 'SCM'        },
+  { id: 'hcm-global',  name: 'Oracle HCM Global Human Resources Cloud',   pillar: 'HCM'        },
+  { id: 'hcm-pay',     name: 'Oracle HCM Payroll Cloud',                  pillar: 'HCM'        },
+  { id: 'fin-ah',      name: 'Accounting Hub',                            pillar: 'ERP'        },
+  { id: 'cna',         name: 'Cloud Native Applications on Oracle Cloud', pillar: 'OCI'        },
+  { id: 'wfm',         name: 'Workforce Management',                      pillar: 'HCM'        },
+  { id: 'pi',          name: 'Oracle Cloud Platform Integration',         pillar: 'Technical'  },
+  { id: 'talent',      name: 'Oracle Talent Management Cloud',            pillar: 'HCM'        },
+  { id: 'om',          name: 'Oracle Cloud Order Management',             pillar: 'SCM'        },
+  { id: 'oci-obs',     name: 'OCI Observability & Management',            pillar: 'OCI'        },
+  { id: 'db-to-cloud', name: 'Oracle Database to Oracle Cloud',           pillar: 'Technical'  },
+  { id: 'oci-ba',      name: 'OCI Business Analytics',                    pillar: 'OCI'        },
+  { id: 'ppm',         name: 'Oracle Project Portfolio Management Cloud', pillar: 'ERP'        },
+  { id: 'oci-data',    name: 'OCI Data Management',                       pillar: 'OCI'        },
+  { id: 'oci-mig',     name: 'OCI Migration',                             pillar: 'OCI'        },
+];
+
+const PILLAR_TONE = {
+  ERP:        'var(--sc-red)',
+  HCM:        'var(--sc-red-deep)',
+  SCM:        'var(--sc-red-bright)',
+  OCI:        'var(--sc-steel-700)',
+  Technical:  'var(--sc-steel-500)',
+};
+
+function CertificationsPage({ setPage }) {
+  const [activePillar, setActivePillar] = React.useState('All');
+  const pillars = ['All', ...Object.keys(PILLAR_TONE)];
+  const filtered = activePillar === 'All'
+    ? CERTIFICATIONS
+    : CERTIFICATIONS.filter(c => c.pillar === activePillar);
+
+  const counts = Object.keys(PILLAR_TONE).reduce((m, k) => {
+    m[k] = CERTIFICATIONS.filter(c => c.pillar === k).length;
+    return m;
+  }, {});
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 48 }}>
+      <Hero
+        kicker="Oracle Service Partner · 16 expertise areas"
+        headline="Sixteen badges. "
+        accent="One bench."
+        deck="Every certification below is held by named consultants on the SC team. We don't carry expertise areas in a slide deck — we run delivery against them."
+      >
+        <PrimaryButton onClick={() => setPage('contact')}>Verify a credential <ArrowRight size={14} stroke={2} /></PrimaryButton>
+      </Hero>
+
+      {/* Pillar counts */}
+      <section style={{
+        background: 'rgba(255,255,255,0.04)',
+        backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 16, padding: '36px 44px',
+      }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 24, alignItems: 'flex-end',
+        }}>
+          {Object.entries(counts).map(([pillar, n], i, arr) => (
+            <div key={pillar} style={{
+              borderRight: i < arr.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+              paddingRight: i < arr.length - 1 ? 16 : 0,
+            }}>
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+                letterSpacing: '1.8px', textTransform: 'uppercase',
+                color: PILLAR_TONE[pillar],
+              }}>{pillar}</div>
+              <div className="sc-tnum" style={{
+                fontFamily: 'var(--font-display)', fontWeight: 900,
+                fontSize: 'clamp(48px, 5vw, 76px)', lineHeight: 0.9, color: '#fff',
+                margin: '6px 0',
+              }}>{n}</div>
+              <div style={{
+                fontSize: 13, lineHeight: 1.4, color: 'rgba(255,255,255,0.45)',
+              }}>Expertise area{n === 1 ? '' : 's'}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Filter chips */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+          letterSpacing: '1.8px', textTransform: 'uppercase', color: '#949494', marginRight: 4,
+        }}>Filter by pillar</span>
+        {pillars.map(p => (
+          <FilterChip
+            key={p}
+            label={p}
+            active={p === activePillar}
+            onClick={() => setActivePillar(p)}
+          />
+        ))}
+      </div>
+
+      {/* Badge grid */}
+      <section style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 16,
+      }}>
+        {filtered.map(c => <BadgeCard key={c.id} cert={c} />)}
+      </section>
+
+      <FeatureTile
+        variant="slate"
+        kicker="Partner network"
+        headline="Oracle PartnerNetwork member · Service Partner tier."
+        deck="EMEA — Middle East & North Africa region. Service partner credentials are renewed annually against the Oracle expertise framework. Verification details available on request."
+        cta="Request the partner letter"
+        onCtaClick={() => setPage('contact')}
+      />
+
+      {/* Why it matters */}
+      <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <QuietCard>
+          <Kicker color="red">What an expertise area means</Kicker>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: '#e9e9e9', margin: '14px 0 0' }}>
+            Each Oracle Service Partner expertise area is a credential awarded by Oracle to a partner that has demonstrated, with named consultants and customer references, that it can implement and run the named cloud service. The credential is annual and tracked against live engagements.
+          </p>
+        </QuietCard>
+        <QuietCard>
+          <Kicker color="red">How we maintain them</Kicker>
+          <p style={{ fontSize: 15, lineHeight: 1.6, color: '#e9e9e9', margin: '14px 0 0' }}>
+            Every consultant at SC carries at least one Oracle Cloud certification, paid for by the firm. Renewals are tracked centrally. New expertise areas are added as Oracle ships new cloud services that map to demand from our market.
+          </p>
+        </QuietCard>
+      </section>
+    </div>
+  );
+}
+
+function FilterChip({ label, active, onClick }) {
+  const [hover, setHover] = React.useState(false);
+  const isActive = active;
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
+        letterSpacing: '1.5px', textTransform: 'uppercase',
+        padding: '8px 14px', borderRadius: 999,
+        background: isActive ? 'var(--sc-red)' : (hover ? 'var(--sc-steel-800)' : 'transparent'),
+        color: isActive ? '#fff' : '#fff',
+        border: `1px solid ${isActive ? 'var(--sc-red)' : 'var(--sc-steel-700)'}`,
+        cursor: 'pointer',
+        transition: 'background 150ms ease, border-color 150ms ease',
+      }}
+    >{label}</button>
+  );
+}
+
+function BadgeCard({ cert }) {
+  const tone = PILLAR_TONE[cert.pillar];
+  return (
+    <article style={{
+      background: 'rgba(255,255,255,0.03)',
+      backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: `2px solid ${tone}`,
+      borderRadius: 12,
+      padding: '24px 22px 22px',
+      display: 'flex', flexDirection: 'column', gap: 16,
+      minHeight: 240,
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      {/* Top bar */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <OracleMark />
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+          letterSpacing: '1.5px', textTransform: 'uppercase',
+          color: tone,
+          padding: '4px 9px', borderRadius: 999,
+          border: `1px solid ${tone}`,
+        }}>{cert.pillar}</span>
+      </div>
+
+      {/* Shield */}
+      <Shield size={36} stroke={1.5} color={tone} style={{ marginTop: 4 }} />
+
+      {/* Title */}
+      <div style={{ flex: 1 }}>
+        <div style={{
+          fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
+          letterSpacing: '1.5px', textTransform: 'uppercase',
+          color: '#949494', marginBottom: 6,
+        }}>Expertise in</div>
+        <h4 style={{
+          fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 16,
+          lineHeight: 1.25, color: '#fff', margin: 0,
+        }}>{cert.name}</h4>
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: 10,
+        letterSpacing: '1.5px', textTransform: 'uppercase', color: '#949494',
+        paddingTop: 10, borderTop: '1px solid var(--sc-steel-800)',
+      }}>EMEA · Middle East & N. Africa</div>
+
+      {/* Decorative diagonal corner */}
+      <div style={{
+        position: 'absolute', top: 0, right: 0,
+        width: 32, height: 32,
+        background: `linear-gradient(225deg, ${tone} 0 50%, transparent 50%)`,
+        opacity: 0.7,
+      }} />
+    </article>
+  );
+}
+
+function OracleMark() {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 6,
+      fontFamily: 'var(--font-display)', fontWeight: 900,
+      fontSize: 14, letterSpacing: '0.4px', color: '#fff',
+    }}>
+      <span style={{
+        background: 'var(--sc-red)', color: '#fff',
+        padding: '2px 7px', borderRadius: 3, letterSpacing: '0.4px',
+        fontSize: 12,
+      }}>ORACLE</span>
+      <span style={{
+        fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9,
+        letterSpacing: '1.5px', color: '#949494', textTransform: 'uppercase',
+      }}>Service Partner</span>
+    </div>
+  );
+}
+
+Object.assign(window, { CertificationsPage });
+
