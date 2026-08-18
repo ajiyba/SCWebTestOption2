@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SC Digital Business Card</title>
+<link rel="stylesheet" href="colors_and_type.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#0e1216;height:100%;height:100dvh}
+body{display:flex;align-items:center;justify-content:center;padding:0;position:relative;overflow:hidden}
+.card{position:relative;width:100%;max-width:none;height:100vh;height:100dvh;background:#fff;border-radius:0;box-shadow:none;overflow:hidden;display:flex;flex-direction:column}
+.card-top{position:relative;padding:28px 24px 16px;background:var(--ink-800);overflow:hidden;flex:0 0 auto}
+.card-top::before{content:"";position:absolute;inset:0;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,0.025) 0 2px,transparent 2px 22px);pointer-events:none}
+.card-top-inner{position:relative;display:flex;align-items:center;gap:16px}
+.icon-wrap{flex:0 0 auto;width:56px;height:56px;display:flex;align-items:center;justify-content:center}
+.icon-wrap img{width:56px;height:auto;display:block;filter:drop-shadow(0 4px 14px rgba(0,0,0,0.5))}
+.name-block{flex:1;min-width:0}
+.name{font-family:var(--font-display);font-weight:700;font-size:1.3rem;line-height:1.08;letter-spacing:-0.005em;color:#fff}
+.title{font-family:var(--font-body);font-weight:400;font-size:0.85rem;color:var(--silver-300);margin-top:3px}
+.company{position:relative;font-family:var(--font-mono);font-size:0.64rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--silver-400);text-align:center;margin-top:14px}
+.rows{padding:12px 24px 4px;flex:1 1 auto;overflow-y:auto;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:0}
+.row{display:flex;align-items:center;gap:12px;padding:8px 0;text-decoration:none;color:#1C2127;transition:opacity var(--dur-fast) var(--ease-out)}
+.row:active{opacity:0.55}
+.row .icon{flex:0 0 auto;width:20px;height:20px;color:var(--accent)}
+.row .text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.row .label{font-family:var(--font-mono);font-size:0.66rem;letter-spacing:0.16em;text-transform:uppercase;color:#8a929b}
+.row .value{font-family:var(--font-body);font-size:1rem;font-weight:500;color:#1C2127;word-break:break-word}
+.actions{padding:10px 24px max(16px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:8px;flex:0 0 auto}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;height:44px;border-radius:var(--r-pill);font-family:var(--font-body);font-weight:500;font-size:0.92rem;text-decoration:none;border:1.5px solid transparent;transition:all var(--dur-fast) var(--ease-out)}
+.btn .icon{width:18px;height:18px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{background:var(--accent-press);transform:scale(0.98)}
+.btn-secondary{background:transparent;border-color:var(--accent);color:var(--accent)}
+.btn-secondary:active{background:rgba(29,134,172,0.08);transform:scale(0.98)}
+.notfound{font-family:var(--font-body);color:var(--fg2);text-align:center;padding:60px 20px}
+@media (min-width:480px){.card{max-width:420px;height:auto;min-height:auto;margin:32px 0;border-radius:var(--r-lg);box-shadow:var(--shadow-lg)}body{padding:32px 16px;overflow:auto;height:auto}.rows{overflow-y:visible}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const CONTACTS = {
+  "sadeq-laqa": {
+    name: "Sadeq Laqa",
+    title: "Sales Director",
+    company: "Software Consultancy",
+    mobile: "+962 777 77 91 40",
+    business: "+962 6 581 48 82",
+    fax: "+962 6 581 48 83",
+    website: "www.sc.com.jo",
+    location: "Amman, Jordan",
+    email: "Sadeq.laqa@sc.com.jo"
+  },
+  "ibrahim-younis": {
+    name: "Ibrahim Younis",
+    title: "Chief Executive Officer (CEO)",
+    company: "Software Consultancy",
+    mobile: "+962 777 11 00 44",
+    business: "+962 6 581 48 82",
+    fax: "+962 6 581 48 83",
+    email: "Ibrahim.younis@sc.com.jo"
+  },
+  "anas-abaza": {
+    name: "Anas Abaza",
+    title: "Sales Support Team Lead",
+    company: "Software Consultancy",
+    mobile: "+962 77 009 9220",
+    business: "+962 6 581 48 82",
+    fax: "+962 6 581 48 83",
+    website: "www.sc.com.jo",
+    location: "Amman, Jordan",
+    email: "Anas.abaza@sc.com.jo"
+  }
+};
+
+function digits(s){ return s.replace(/[^\d+]/g,""); }
+
+function buildVCard(c){
+  const parts = c.name.trim().split(" ");
+  const first = parts[0] || "";
+  const last = parts.slice(1).join(" ") || "";
+  let v = "BEGIN:VCARD\nVERSION:3.0\n";
+  v += `N:${last};${first};;;\n`;
+  v += `FN:${c.name}\n`;
+  v += `ORG:${c.company}\n`;
+  v += `TITLE:${c.title}\n`;
+  if(c.mobile) v += `TEL;TYPE=CELL:${digits(c.mobile)}\n`;
+  if(c.business) v += `TEL;TYPE=WORK:${digits(c.business)}\n`;
+  if(c.fax) v += `TEL;TYPE=FAX:${digits(c.fax)}\n`;
+  if(c.email) v += `EMAIL:${c.email}\n`;
+  if(c.website) v += `URL:https://${c.website.replace(/^https?:\/\//,"")}\n`;
+  if(c.location) v += `ADR;TYPE=WORK:;;;${c.location};;;\n`;
+  v += "END:VCARD";
+  return v;
+}
+
+function iconSvg(name){
+  return `<i data-lucide="${name}" class="icon"></i>`;
+}
+
+function renderCard(c){
+  const rows = [];
+  if(c.mobile) rows.push({icon:"smartphone",label:"Mobile",value:c.mobile,href:`tel:${digits(c.mobile)}`});
+  if(c.business) rows.push({icon:"phone",label:"Business",value:c.business,href:`tel:${digits(c.business)}`});
+  if(c.fax) rows.push({icon:"printer",label:"Fax",value:c.fax,href:null});
+  if(c.email) rows.push({icon:"mail",label:"Email",value:c.email,href:`mailto:${c.email}`});
+  if(c.website) rows.push({icon:"globe",label:"Website",value:c.website,href:`https://${c.website}`});
+  if(c.location) rows.push({icon:"map-pin",label:"Location",value:c.location,href:null});
+
+  const rowsHtml = rows.map(r => {
+    const inner = `${iconSvg(r.icon)}<div class="text"><span class="label">${r.label}</span><span class="value">${r.value}</span></div>`;
+    return r.href ? `<a class="row" href="${r.href}">${inner}</a>` : `<div class="row">${inner}</div>`;
+  }).join("");
+
+  const vcard = buildVCard(c);
+  const vcardBlob = new Blob([vcard], {type:"text/vcard"});
+  const vcardUrl = URL.createObjectURL(vcardBlob);
+  const filename = c.name.replace(/\s+/g,"_") + ".vcf";
+
+  document.getElementById("root").innerHTML = `
+    <div class="card">
+      <div class="card-top">
+        <div class="card-top-inner">
+          <div class="icon-wrap"><img src="uploads/Artboard 1@2x.png" alt="SC"></div>
+          <div class="name-block">
+            <div class="name">${c.name}</div>
+            <div class="title">${c.title}</div>
+          </div>
+        </div>
+        <div class="company">${c.company}</div>
+      </div>
+      <div class="rows">${rowsHtml}</div>
+      <div class="actions">
+        <a class="btn btn-primary" id="saveContact" href="${vcardUrl}" download="${filename}">${iconSvg("user-plus")}Save Contact</a>
+        <a class="btn btn-secondary" href="tel:${digits(c.mobile || c.business)}">${iconSvg("phone-call")}Call</a>
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function renderDirectory(){
+  const items = Object.entries(CONTACTS).map(([id,c]) => `<a class="row" href="?id=${id}">${iconSvg("user")}<div class="text"><span class="label">${c.title}</span><span class="value">${c.name}</span></div></a>`).join("");
+  document.getElementById("root").innerHTML = `
+    <div class="card">
+      <div class="card-top">
+        <div class="card-top-inner">
+          <div class="icon-wrap" style="width:56px;height:56px"><img src="uploads/Artboard 1@2x.png" alt="SC" style="width:56px"></div>
+          <div class="name-block">
+            <div class="name" style="font-size:1.25rem">Digital Business Cards</div>
+          </div>
+        </div>
+        <div class="company">SOFTWARE CONSULTANCY</div>
+      </div>
+      <div class="rows">${items}</div>
+    </div>`;
+  lucide.createIcons();
+}
+
+function render(){
+  const id = new URLSearchParams(location.search).get("id");
+  if(!id){ renderDirectory(); return; }
+  const c = CONTACTS[id];
+  if(!c){
+    document.getElementById("root").innerHTML = `<div class="notfound">Business card not found.</div>`;
+    return;
+  }
+  renderCard(c);
+}
+render();
+</script>
+</body>
+</html>

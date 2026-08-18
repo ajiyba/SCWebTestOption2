@@ -22,11 +22,11 @@ function Nav() {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
   }, [menuOpen]);
   const links = [
-    { href: '#story', label: 'Story' },
-    { href: '#expertise', label: 'Expertise' },
-    { href: '#services', label: 'Services' },
-    { href: '#products', label: 'Products' },
-    { href: '#industries', label: 'Industries' }];
+  { href: '#story', label: 'Story' },
+  { href: '#expertise', label: 'Expertise' },
+  { href: '#services', label: 'Services' },
+  { href: '#products', label: 'Products' },
+  { href: '#industries', label: 'Industries' }];
 
   return (
     <nav className={"nav" + (scrolled || menuOpen ? " scrolled" : "")}>
@@ -37,7 +37,7 @@ function Nav() {
         </div>
         <div className="nav-cta">
           <a className="btn btn-ghost" href="#services">View Our Services</a>
-          <a className="btn btn-primary" href="#contact" onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.dispatchEvent(new CustomEvent('sc:open-contact')); }}>Book a meeting with us <i data-lucide="arrow-right"></i></a>
+          <a className="btn btn-primary" href="#contact" onClick={(e) => {e.preventDefault();setMenuOpen(false);window.dispatchEvent(new CustomEvent('sc:open-contact'));}}>Book a meeting with us <i data-lucide="arrow-right"></i></a>
         </div>
         <button className={"menu-btn" + (menuOpen ? " open" : "")} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} onClick={() => setMenuOpen((v) => !v)}>
           <span></span><span></span><span></span>
@@ -45,7 +45,7 @@ function Nav() {
       </div>
       <div className={"nav-mobile" + (menuOpen ? " open" : "")}>
         {links.map((l) => <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}>{l.label}</a>)}
-        <a className="btn btn-primary" href="#contact" onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.dispatchEvent(new CustomEvent('sc:open-contact')); }}>Book a meeting with us <i data-lucide="arrow-right"></i></a>
+        <a className="btn btn-primary" href="#contact" onClick={(e) => {e.preventDefault();setMenuOpen(false);window.dispatchEvent(new CustomEvent('sc:open-contact'));}}>Book a meeting with us <i data-lucide="arrow-right"></i></a>
       </div>
     </nav>);
 
@@ -142,13 +142,13 @@ function Hero() {
       <div className="cine-inner">
         <span className="cine-eyebrow" data-stagger="1">Oracle Fusion Partner · Implementation · Support · Verticals</span>
         <div className="hl-set cine-title" data-stagger="2">
-          <h1 data-hl="editorial" style={{fontSize:'clamp(2.4rem,5.6vw,4.6rem)'}}>The experience you need,<br />the guidance you can <span className="accent" style={{fontFamily:'Madelyn'}}>trust.</span></h1>
+          <h1 data-hl="editorial" style={{ fontSize: 'clamp(1.9rem,4.6vw,3.7rem)' }}>The experience you need,<br />the guidance you can&nbsp;<span className="accent">trust.</span></h1>
           <h1 data-hl="transform">15+ Oracle expertise areas.<br /><span className="accent">One partner.</span></h1>
           <h1 data-hl="delivered">A decade of Oracle Cloud delivery,<br /><span className="accent">since 2016.</span></h1>
         </div>
         <p className="cine-sub" data-stagger="3">We implement, support and extend Oracle Fusion Cloud, and build the vertical portals and automations enterprise and government clients use to run their business. A specialized Oracle Service Partner since 2016.</p>
         <div className="cine-cta" data-stagger="4">
-          <a className="btn btn-primary" href="#contact" onClick={(e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent('sc:open-contact')); }}>Book a meeting with us <i data-lucide="arrow-right"></i></a>
+          <a className="btn btn-primary" href="#contact" onClick={(e) => {e.preventDefault();window.dispatchEvent(new CustomEvent('sc:open-contact'));}}>Book a meeting with us <i data-lucide="arrow-right"></i></a>
           <a className="btn btn-secondary" href="#services">View Our Services</a>
         </div>
         <div className="cine-meta" data-stagger="5">
